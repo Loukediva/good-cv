@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GOOD CV — Créez votre CV</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+:root{
+  --ink: #14171f;
+  --ink-soft: #1c212c;
+  --ink-line: #2b3140;
+  --ink-text: #e9e9ec;
+  --ink-muted: #8b92a3;
+  --paper: #ffffff;
+  --paper-line: #e5e1d6;
+  --text-dark: #1b1f2b;
+  --text-muted: #6b7280;
+  --accent: #1f6f63;
+  --accent-soft: #1f6f6322;
+  --warn: #c1432e;
+}
+
+*{ box-sizing:border-box; }
+html,body{ margin:0; padding:0; }
+body{
+  font-family:'Inter', sans-serif;
+  background: var(--ink);
+  color: var(--ink-text);
+  min-height:100vh;
+}
+::selection{ background: var(--accent); color:#fff; }
+
+button, input, textarea, select{ font-family:inherit; }
+
+/* ---------- Layout ---------- */
+.app{ display:flex; flex-direction:column; min-height:100vh; }
+
+.topbar{
+  display:flex; align-items:center; justify-content:space-between;
+  padding: 18px 28px;
+  border-bottom: 1px solid var(--ink-line);
+  gap: 20px; flex-wrap: wrap;
+}
+.brand{ display:flex; align-items:baseline; gap:10px; }
+.brand-mark{
+  font-family:'Fraunces', serif; font-weight:700; font-size: 22px; letter-spacing:-0.02em;
+}
+.brand-sub{ font-family:'IBM Plex Mono', monospace; font-size:11px; color:var(--ink-muted); letter-spacing:0.08em; text-transform:uppercase; }
+
+.topbar-actions{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+
+.btn{
+  font-family:'Inter', sans-serif; font-size: 13px; font-weight:600;
+  padding: 9px 16px; border-radius: 7px; border: 1px solid var(--ink-line);
+  background: var(--ink-soft); color: var(--ink-text); cursor:pointer;
+  transition: all .15s ease;
+}
+.btn:hover{ border-color: var(--accent); color:#fff; }
+.btn-accent{
+  background: var(--accent); border-color: var(--accent); color:#fff;
+}
+.btn-accent:hover{ filter: brightness(1.1); }
+.btn-ghost{ background:transparent; }
+.btn-sm{ padding: 5px 10px; font-size:12px; border-radius:6px; }
+
+.color-swatch{
+  display:flex; align-items:center; gap:8px;
+  font-family:'IBM Plex Mono', monospace; font-size:11px; color: var(--ink-muted);
+}
+.color-swatch input[type=color]{
+  width:28px; height:28px; border:none; border-radius:50%; overflow:hidden; padding:0;
+  background:none; cursor:pointer;
+}
+
+.workspace{
+  flex:1; display:grid; grid-template-columns: minmax(360px, 460px) 1fr;
+  min-height:0;
+}
+
+/* ---------- Desk (form) ---------- */
+.desk{
+  background: var(--ink);
+  border-right: 1px solid var(--ink-line);
+  padding: 26px 26px 80px;
+  overflow-y:auto;
+  max-height: calc(100vh - 65px);
+}
+.desk-section{
+  margin-bottom: 30px;
+  padding-bottom: 26px;
+  border-bottom: 1px solid var(--ink-line);
+}
+.desk-section:last-child{ border-bottom:none; }
+
+.desk-title{
+  font-family:'IBM Plex Mono', monospace;
+  font-size: 11px; text-transform:uppercase; letter-spacing:0.12em;
+  color: var(--accent); margin: 0 0 16px;
+  display:flex; align-items:center; gap:8px;
+}
+.desk-title::before{ content:''; width:14px; height:1px; background:var(--accent); }
+
+.field{ margin-bottom: 12px; }
+.field label{
+  display:block; font-size: 11px; color: var(--ink-muted);
+  margin-bottom: 5px; font-weight:500;
+}
+.field input[type=text], .field input[type=email], .field input[type=tel], .field textarea, .field select{
+  width:100%; background: var(--ink-soft); border:1px solid var(--ink-line);
+  color: var(--ink-text); border-radius:7px; padding: 9px 11px; font-size:13.5px;
+  outline:none; transition: border-color .15s ease;
+}
+.field input:focus, .field textarea:focus, .field select:focus{ border-color: var(--accent); }
+.field textarea{ resize: vertical; min-height: 70px; line-height:1.5; }
+.field-row{ display:flex; gap:10px; }
+.field-row .field{ flex:1; }
+
+.photo-row{ display:flex; align-items:center; gap:14px; margin-bottom:16px; }
+.photo-preview{
+  width:56px; height:56px; border-radius:50%; background: var(--ink-soft);
+  border:1px solid var(--ink-line); background-size:cover; background-position:center;
+  flex-shrink:0; display:flex; align-items:center; justify-content:center;
+  color: var(--ink-muted); font-size:10px;
+}
+.file-btn{ position:relative; overflow:hidden; }
+.file-btn input[type=file]{ position:absolute; inset:0; opacity:0; cursor:pointer; }
+
+.entry-card{
+  background: var(--ink-soft); border:1px solid var(--ink-line); border-radius:9px;
+  padding: 14px; margin-bottom: 12px; position:relative;
+}
+.entry-card .remove-btn{
+  position:absolute; top:10px; right:10px; background:none; border:none;
+  color: var(--ink-muted); cursor:pointer; font-size:14px; line-height:1;
+  width:22px; height:22px; border-radius:5px;
+}
+.entry-card .remove-btn:hover{ background: var(--warn); color:#fff; }
+.checkline{ display:flex; align-items:center; gap:7px; font-size:12px; color:var(--ink-muted); margin-top:6px; }
+.checkline input{ accent-color: var(--accent); }
+
+.add-btn{
+  width:100%; padding:10px; border-radius:7px; border:1px dashed var(--ink-line);
+  background:transparent; color: var(--ink-muted); font-size:13px; cursor:pointer;
+  transition: all .15s ease;
+}
+.add-btn:hover{ border-color:var(--accent); color:var(--accent); }
+
+.tag-input-wrap{
+  display:flex; flex-wrap:wrap; gap:7px; margin-bottom:8px;
+}
+.tag{
+  display:flex; align-items:center; gap:6px;
+  background: var(--accent-soft); border:1px solid var(--accent);
+  color: var(--ink-text); padding: 5px 10px; border-radius: 20px; font-size:12.5px;
+}
+.tag button{ background:none; border:none; color:var(--ink-muted); cursor:pointer; font-size:13px; padding:0; line-height:1;}
+.tag button:hover{ color: var(--warn); }
+.hint{ font-size:11px; color: var(--ink-muted); margin-top:4px; }
+
+.cv-save-row{
+  display:flex; align-items:center; gap:8px; padding: 8px 10px;
+  background: var(--ink-soft); border:1px solid var(--ink-line); border-radius:7px;
+  margin-bottom:8px;
+}
+.cv-save-row.current{ border-color: var(--accent); }
+.cv-save-info{ flex:1; min-width:0; }
+.cv-save-name{ font-size:12.5px; font-weight:600; color: var(--ink-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.cv-save-date{ font-size:10.5px; color: var(--ink-muted); font-family:'IBM Plex Mono', monospace; }
+.cv-save-actions{ display:flex; gap:4px; flex-shrink:0; }
+
+/* ---------- Preview column ---------- */
+.preview-wrap{
+  background: #0c0e14;
+  display:flex; flex-direction:column; align-items:center;
+  overflow-y:auto; max-height: calc(100vh - 65px);
+  padding: 30px 30px 70px;
+}
+
+.tabs{
+  display:flex; gap:2px; width:100%; max-width:794px;
+}
+.tab{
+  font-family:'Inter', sans-serif; font-size:13px; font-weight:600;
+  padding: 10px 22px 12px; border:none; cursor:pointer;
+  border-radius: 10px 10px 0 0;
+  background: #1a1e28; color: var(--ink-muted);
+  transform: translateY(4px);
+  transition: all .15s ease;
+}
+.tab.active{
+  background: var(--paper); color: var(--text-dark);
+  transform: translateY(0);
+  box-shadow: 0 -2px 8px rgba(0,0,0,0.15);
+}
+.tab:not(.active):hover{ color: var(--ink-text); }
+
+/* ---------- The CV page itself ---------- */
+.cv-page{
+  width: 100%; max-width: 794px; min-height: 1123px;
+  background: var(--paper); color: var(--text-dark);
+  box-shadow: 0 20px 60px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.2);
+  padding: 56px 60px;
+  font-family:'Inter', sans-serif;
+  border-radius: 0 4px 4px 4px;
+}
+.cv-eyebrow{
+  font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:0.1em;
+  text-transform:uppercase; color: var(--accent); margin: 0 0 10px;
+}
+.cv-header{ display:flex; gap:24px; align-items:center; margin-bottom: 34px; }
+.cv-photo{
+  width:96px; height:96px; border-radius:50%; background-size:cover; background-position:center;
+  background-color:#eee; flex-shrink:0; border: 2px solid var(--paper-line);
+}
+.cv-name{ font-family:'Fraunces', serif; font-weight:700; font-size: 34px; margin:0 0 4px; letter-spacing:-0.01em; line-height:1.1;}
+.cv-role{ font-size:16px; color: var(--accent); font-weight:600; margin:0 0 10px; }
+.cv-contacts{ display:flex; flex-wrap:wrap; gap: 4px 14px; font-size:12.5px; color: var(--text-muted); }
+
+.cv-body{ display:grid; grid-template-columns: 2fr 1fr; gap: 40px; }
+.cv-section{ margin-bottom: 26px; }
+.cv-section h3{
+  font-family:'IBM Plex Mono', monospace; font-size:11.5px; text-transform:uppercase;
+  letter-spacing:0.1em; color: var(--text-dark); margin: 0 0 14px; padding-bottom:8px;
+  border-bottom: 1px solid var(--paper-line);
+}
+.cv-summary p{ font-size: 13.5px; line-height:1.65; color:#333; margin:0; }
+
+.exp-item, .edu-item{ margin-bottom: 18px; }
+.exp-item:last-child, .edu-item:last-child{ margin-bottom:0; }
+.item-top{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+.item-title{ font-weight:700; font-size:14px; }
+.item-sub{ font-size:12.5px; color: var(--accent); font-weight:600; margin-top:1px;}
+.item-dates{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color: var(--text-muted); white-space:nowrap; }
+.item-desc{ font-size:12.5px; color:#444; line-height:1.55; margin-top:6px; }
+
+.skill-pill{
+  display:inline-block; font-size:12px; padding: 4px 11px; margin: 0 6px 6px 0;
+  border-radius: 14px; border:1px solid var(--paper-line); color:#333;
+}
+.lang-row{ display:flex; justify-content:space-between; font-size:12.5px; margin-bottom:7px; }
+.lang-row span:last-child{ color: var(--text-muted); font-family:'IBM Plex Mono', monospace; font-size:11px; }
+.interest-line{ font-size:12.5px; color:#333; line-height:1.8; }
+
+.side-name, .side-role, .side-contacts{ display:none; }
+
+.empty-note{ color: var(--text-muted); font-size:12px; font-style:italic; }
+
+/* ---- Template: Classique (default grid above) ---- */
+
+/* ---- Template: Moderne — colored sidebar ---- */
+.template-moderne{ padding:0; overflow:hidden; }
+.template-moderne .cv-body{ grid-template-columns: 240px 1fr; gap:0; }
+.template-moderne .cv-header{ display:none; }
+.template-moderne .cv-side{
+  background: var(--accent); color:#fff; padding: 46px 26px; order:-1;
+}
+.template-moderne .cv-side h3{ color:#fff; border-bottom-color: rgba(255,255,255,0.3); }
+.template-moderne .cv-photo{ width:110px; height:110px; margin: 0 auto 20px; display:block; border-color: rgba(255,255,255,0.5); }
+.template-moderne .side-name{ display:block; font-family:'Fraunces', serif; font-weight:700; font-size:22px; text-align:center; margin:0 0 4px; }
+.template-moderne .side-role{ display:block; text-align:center; font-size:12.5px; opacity:0.85; margin:0 0 24px; }
+.template-moderne .side-contacts{ display:block; font-size:11.5px; line-height:2; opacity:0.9; word-break:break-word; }
+.template-moderne .skill-pill{ border-color: rgba(255,255,255,0.4); color:#fff; }
+.template-moderne .lang-row span:last-child{ color: rgba(255,255,255,0.75); }
+.template-moderne .interest-line{ color: rgba(255,255,255,0.9); }
+.template-moderne .cv-main{ padding: 50px 46px; }
+.template-moderne .cv-eyebrow{ color: var(--accent); }
+
+/* ---- Template: Minimal ---- */
+.template-minimal{ padding: 64px 70px; }
+.template-minimal .cv-name{ font-weight:500; font-size:30px; }
+.template-minimal .cv-role{ color: var(--text-dark); font-weight:400; }
+.template-minimal .cv-photo{ display:none; }
+.template-minimal .cv-section h3{ font-weight:400; letter-spacing:0.16em; }
+.template-minimal .item-sub{ color: var(--text-dark); font-weight:500; }
+.template-minimal .cv-body{ grid-template-columns: 1fr; }
+.template-minimal .cv-side{ border-top: 1px solid var(--paper-line); padding-top:10px; margin-top:6px;}
+.template-minimal .skill-pill{ border-radius:0; border:none; border-bottom:1px solid var(--paper-line); padding-left:0; }
+
+/* ---------- Footer note ---------- */
+.footer-note{
+  text-align:center; font-size:11px; color: var(--ink-muted); margin-top:18px;
+  font-family:'IBM Plex Mono', monospace;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 980px){
+  .workspace{ grid-template-columns: 1fr; }
+  .desk, .preview-wrap{ max-height:none; }
+  .cv-page{ padding: 34px 28px; }
+  .template-moderne .cv-main{ padding: 34px 24px; }
+  .template-minimal{ padding: 40px 26px; }
+}
+
+/* ---------- Print ---------- */
+@media print{
+  body *{ visibility:hidden; }
+  .cv-page, .cv-page *{ visibility:visible; }
+  .cv-page{
+    position:absolute; top:0; left:0; width:100%; box-shadow:none; border-radius:0;
+    min-height:auto;
+  }
+}
+
+/* focus visibility for accessibility */
+a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, select:focus-visible{
+  outline: 2px solid var(--accent); outline-offset:2px;
+}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <header class="topbar">
+    <div class="brand">
+      <span class="brand-mark">GOOD CV</span>
+      <span class="brand-sub">Fabriqué à la main, en direct</span>
+    </div>
+    <div class="topbar-actions">
+      <label class="color-swatch">Accent
+        <input type="color" id="accentPicker" value="#1f6f63">
+      </label>
+      <label class="color-swatch" title="Affecte uniquement le PDF téléchargé (l'aperçu reste affiché en A4)">Format
+        <select id="paperFormat" style="background:var(--ink-soft); color:var(--ink-text); border:1px solid var(--ink-line); border-radius:6px; padding:5px 8px; font-family:'Inter',sans-serif; font-size:12px;">
+          <option value="a4" selected>A4</option>
+          <option value="a5">A5</option>
+        </select>
+      </label>
+      <label class="color-swatch" title="1 page : le contenu est réduit pour tenir entièrement sur une page. Plusieurs pages : le contenu garde sa taille et se poursuit sur d'autres pages si besoin.">Pages
+        <select id="pageMode" style="background:var(--ink-soft); color:var(--ink-text); border:1px solid var(--ink-line); border-radius:6px; padding:5px 8px; font-family:'Inter',sans-serif; font-size:12px;">
+          <option value="fit" selected>1 page (ajusté)</option>
+          <option value="auto">Plusieurs si besoin</option>
+        </select>
+      </label>
+      <label class="color-swatch" title="Charge un CV d'exemple pré-rempli pour un métier donné">Exemples
+        <select id="exampleSelect" style="background:var(--ink-soft); color:var(--ink-text); border:1px solid var(--ink-line); border-radius:6px; padding:5px 8px; font-family:'Inter',sans-serif; font-size:12px;">
+          <option value="" selected>Choisir un métier…</option>
+          <option value="pm">Cheffe de projet digital</option>
+          <option value="dev">Développeur web</option>
+          <option value="commercial">Commercial(e)</option>
+          <option value="teacher">Enseignant(e)</option>
+          <option value="nurse">Infirmier / Infirmière</option>
+          <option value="student">Étudiant(e) / Stage</option>
+        </select>
+      </label>
+      <button class="btn btn-ghost" id="clearAll">Effacer tout</button>
+      <button class="btn btn-ghost" id="downloadJpeg">Exporter en JPEG</button>
+      <button class="btn btn-accent" id="downloadPdf">Télécharger en PDF</button>
+    </div>
+  </header>
+
+  <main class="workspace">
+    <!-- ============ DESK / FORM ============ -->
+    <section class="desk">
+
+      <div class="desk-section">
+        <p class="desk-title">Mes CV</p>
+        <div class="field-row">
+          <div class="field"><label>Nom de ce CV</label><input type="text" id="cvNameInput" placeholder="Ex : CV Marketing"></div>
+        </div>
+        <div style="display:flex; gap:8px; margin-bottom:14px;">
+          <button class="btn btn-accent btn-sm" id="saveCvBtn" style="flex:1;">Enregistrer ce CV</button>
+          <button class="btn btn-sm" id="newCvBtn">Nouveau CV</button>
+        </div>
+        <div id="savedCvList"></div>
+        <p class="hint" id="savedCvHint"></p>
+      </div>
+
+      <div class="desk-section">
+        <p class="desk-title">Informations</p>
+        <div class="photo-row">
+          <div class="photo-preview" id="photoPreview">Photo</div>
+          <button class="btn btn-sm file-btn">Choisir une photo
+            <input type="file" id="photoInput" accept="image/*">
+          </button>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Prénom et nom</label><input type="text" id="f-name" placeholder="Claire Dubois"></div>
+        </div>
+        <div class="field"><label>Titre / poste recherché</label><input type="text" id="f-title" placeholder="Cheffe de projet digital"></div>
+        <div class="field-row">
+          <div class="field"><label>E-mail</label><input type="email" id="f-email" placeholder="claire.dubois@mail.com"></div>
+          <div class="field"><label>Téléphone</label><input type="tel" id="f-phone" placeholder="06 12 34 56 78"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Ville</label><input type="text" id="f-location" placeholder="Lyon, France"></div>
+          <div class="field"><label>Site / LinkedIn</label><input type="text" id="f-link" placeholder="linkedin.com/in/claire"></div>
+        </div>
+      </div>
+
+      <div class="desk-section">
+        <p class="desk-title">Profil</p>
+        <div class="field">
+          <textarea id="f-summary" placeholder="Résumez en 2-3 phrases votre parcours et ce que vous recherchez."></textarea>
+        </div>
+      </div>
+
+      <div class="desk-section">
+        <p class="desk-title">Expérience professionnelle</p>
+        <div id="expList"></div>
+        <button class="add-btn" id="addExp">+ Ajouter une expérience</button>
+      </div>
+
+      <div class="desk-section">
+        <p class="desk-title">Formation</p>
+        <div id="eduList"></div>
+        <button class="add-btn" id="addEdu">+ Ajouter une formation</button>
+      </div>
+
+      <div class="desk-section">
+        <p class="desk-title">Compétences</p>
+        <div class="tag-input-wrap" id="skillTags"></div>
+        <div class="field"><input type="text" id="skillInput" placeholder="Tapez une compétence puis Entrée"></div>
+      </div>
+
+      <div class="desk-section">
+        <p class="desk-title">Langues</p>
+        <div id="langList"></div>
+        <button class="add-btn" id="addLang">+ Ajouter une langue</button>
+      </div>
+
+      <div class="desk-section">
+        <p class="desk-title">Centres d'intérêt</p>
+        <div class="tag-input-wrap" id="interestTags"></div>
+        <div class="field"><input type="text" id="interestInput" placeholder="Tapez un centre d'intérêt puis Entrée"></div>
+      </div>
+
+    </section>
+
+    <!-- ============ PREVIEW ============ -->
+    <section class="preview-wrap">
+      <div class="tabs">
+        <button class="tab active" data-template="classique">Classique</button>
+        <button class="tab" data-template="moderne">Moderne</button>
+        <button class="tab" data-template="minimal">Minimal</button>
+      </div>
+      <div class="cv-page template-classique" id="cvPage"></div>
+      <p class="footer-note">Aperçu mis à jour en direct — cliquez sur « Télécharger en PDF » pour imprimer ou enregistrer.</p>
+    </section>
+  </main>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script>
+(function(){
+  let uid = 1;
+  const data = {
+    name:'', title:'', email:'', phone:'', location:'', link:'',
+    photo:'', summary:'',
+    experiences: [],
+    education: [],
+    skills: [],
+    languages: [],
+    interests: [],
+    template: 'classique',
+    accent: '#1f6f63'
+  };
+
+  function newId(){ return 'id' + (uid++); }
+
+  // ---------- Rendering the CV preview ----------
+  function esc(s){
+    return (s||'').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+  function nl2br(s){ return esc(s).replace(/\n/g,'<br>'); }
+
+  function formatDate(d){ return d || ''; }
+
+  function renderContacts(){
+    const parts = [data.email, data.phone, data.location, data.link].filter(Boolean).map(esc);
+    return parts.join(' &nbsp;·&nbsp; ');
+  }
+
+  function renderExperiences(){
+    if(!data.experiences.length) return '<p class="empty-note">Aucune expérience ajoutée pour le moment.</p>';
+    return data.experiences.map(e => `
+      <div class="exp-item">
+        <div class="item-top">
+          <div>
+            <div class="item-title">${esc(e.role) || 'Intitulé du poste'}</div>
+            <div class="item-sub">${esc(e.company) || 'Entreprise'}</div>
+          </div>
+          <div class="item-dates">${esc(e.start)} — ${e.current ? 'Présent' : esc(e.end)}</div>
+        </div>
+        ${e.description ? `<div class="item-desc">${nl2br(e.description)}</div>` : ''}
+      </div>
+    `).join('');
+  }
+
+  function renderEducation(){
+    if(!data.education.length) return '<p class="empty-note">Aucune formation ajoutée pour le moment.</p>';
+    return data.education.map(e => `
+      <div class="edu-item">
+        <div class="item-top">
+          <div>
+            <div class="item-title">${esc(e.degree) || 'Diplôme'}</div>
+            <div class="item-sub">${esc(e.school) || 'Établissement'}</div>
+          </div>
+          <div class="item-dates">${esc(e.start)} — ${esc(e.end)}</div>
+        </div>
+        ${e.description ? `<div class="item-desc">${nl2br(e.description)}</div>` : ''}
+      </div>
+    `).join('');
+  }
+
+  function renderSkills(){
+    if(!data.skills.length) return '<p class="empty-note">Aucune compétence ajoutée.</p>';
+    return data.skills.map(s => `<span class="skill-pill">${esc(s)}</span>`).join('');
+  }
+
+  function renderLanguages(){
+    if(!data.languages.length) return '<p class="empty-note">Aucune langue ajoutée.</p>';
+    return data.languages.map(l => `<div class="lang-row"><span>${esc(l.name) || 'Langue'}</span><span>${esc(l.level)}</span></div>`).join('');
+  }
+
+  function renderInterests(){
+    if(!data.interests.length) return '<p class="empty-note">Aucun centre d’intérêt ajouté.</p>';
+    return `<p class="interest-line">${data.interests.map(esc).join(' &nbsp;·&nbsp; ')}</p>`;
+  }
+
+  function renderCV(){
+    const page = document.getElementById('cvPage');
+    page.className = 'cv-page template-' + data.template;
+    page.style.setProperty('--accent', data.accent);
+
+    const photoHtml = data.photo ? `style="background-image:url('${data.photo}')"` : '';
+
+    page.innerHTML = `
+      <div class="cv-header">
+        <div class="cv-photo" ${photoHtml}></div>
+        <div>
+          <p class="cv-eyebrow">Curriculum Vitae</p>
+          <h1 class="cv-name">${esc(data.name) || 'Votre nom'}</h1>
+          <p class="cv-role">${esc(data.title) || 'Votre titre / poste recherché'}</p>
+          <div class="cv-contacts">${renderContacts()}</div>
+        </div>
+      </div>
+      <div class="cv-body">
+        <div class="cv-main">
+          <div class="cv-section cv-summary">
+            <h3>Profil</h3>
+            <p>${data.summary ? nl2br(data.summary) : '<span class="empty-note">Ajoutez un court résumé de votre profil.</span>'}</p>
+          </div>
+          <div class="cv-section cv-experience">
+            <h3>Expérience</h3>
+            ${renderExperiences()}
+          </div>
+          <div class="cv-section cv-education">
+            <h3>Formation</h3>
+            ${renderEducation()}
+          </div>
+        </div>
+        <aside class="cv-side">
+          <div class="photo-slot" style="display:none"></div>
+          <p class="side-name">${esc(data.name) || 'Votre nom'}</p>
+          <p class="side-role">${esc(data.title) || ''}</p>
+          <div class="side-contacts">
+            ${[data.email, data.phone, data.location, data.link].filter(Boolean).map(esc).join('<br>')}
+          </div>
+          <div class="cv-section cv-skills">
+            <h3>Compétences</h3>
+            ${renderSkills()}
+          </div>
+          <div class="cv-section cv-languages">
+            <h3>Langues</h3>
+            ${renderLanguages()}
+          </div>
+          <div class="cv-section cv-interests">
+            <h3>Centres d'intérêt</h3>
+            ${renderInterests()}
+          </div>
+        </aside>
+      </div>
+    `;
+    // move photo into sidebar for moderne template (CSS reorders, but photo element itself lives in header; duplicate for sidebar via CSS ::before not possible with bg-image easily, so clone here)
+    if(data.template === 'moderne'){
+      const side = page.querySelector('.cv-side');
+      const photoClone = document.createElement('div');
+      photoClone.className = 'cv-photo';
+      if(data.photo) photoClone.style.backgroundImage = `url('${data.photo}')`;
+      side.insertBefore(photoClone, side.firstChild);
+    }
+  }
+
+  // ---------- Form field bindings ----------
+  function bindText(id, key){
+    const el = document.getElementById(id);
+    el.addEventListener('input', () => { data[key] = el.value; renderCV(); });
+  }
+  bindText('f-name','name');
+  bindText('f-title','title');
+  bindText('f-email','email');
+  bindText('f-phone','phone');
+  bindText('f-location','location');
+  bindText('f-link','link');
+  bindText('f-summary','summary');
+
+  // Photo upload
+  document.getElementById('photoInput').addEventListener('change', function(e){
+    const file = e.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = function(ev){
+      data.photo = ev.target.result;
+      document.getElementById('photoPreview').style.backgroundImage = `url('${data.photo}')`;
+      document.getElementById('photoPreview').textContent = '';
+      renderCV();
+    };
+    reader.readAsDataURL(file);
+  });
+
+  // Accent color
+  document.getElementById('accentPicker').addEventListener('input', function(e){
+    data.accent = e.target.value;
+    renderCV();
+  });
+
+  // Template tabs
+  document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+      tab.classList.add('active');
+      data.template = tab.dataset.template;
+      renderCV();
+    });
+  });
+
+  // Download real PDF (rendered from the styled CV, not the browser's print dialog)
+  document.getElementById('downloadPdf').addEventListener('click', () => {
+    const btn = document.getElementById('downloadPdf');
+    const originalText = btn.textContent;
+    btn.textContent = 'Génération...';
+    btn.disabled = true;
+    const page = document.getElementById('cvPage');
+    html2canvas(page, { scale: 2, backgroundColor: '#ffffff', useCORS: true }).then(canvas => {
+      const { jsPDF } = window.jspdf;
+      const format = document.getElementById('paperFormat').value || 'a4';
+      const pageMode = document.getElementById('pageMode').value || 'fit';
+      const pdf = new jsPDF({ unit: 'pt', format: format, orientation: 'portrait' });
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      const imgWidthFull = pageWidth;
+      const imgHeightFull = (canvas.height * imgWidthFull) / canvas.width;
+
+      if (pageMode === 'fit') {
+        // Scale the whole CV down (if needed) so it fits entirely on a single page.
+        let imgWidth = imgWidthFull;
+        let imgHeight = imgHeightFull;
+        if (imgHeight > pageHeight) {
+          const scaleDown = pageHeight / imgHeight;
+          imgHeight = pageHeight;
+          imgWidth = imgWidthFull * scaleDown;
+        }
+        const x = (pageWidth - imgWidth) / 2;
+        pdf.addImage(imgData, 'JPEG', x, 0, imgWidth, imgHeight);
+      } else {
+        // Keep true size, adding extra pages only if the content overflows.
+        let heightLeft = imgHeightFull;
+        let position = 0;
+        pdf.addImage(imgData, 'JPEG', 0, position, imgWidthFull, imgHeightFull);
+        heightLeft -= pageHeight;
+        while (heightLeft > 0) {
+          position = position - pageHeight;
+          pdf.addPage();
+          pdf.addImage(imgData, 'JPEG', 0, position, imgWidthFull, imgHeightFull);
+          heightLeft -= pageHeight;
+        }
+      }
+
+      const fileName = (data.name ? data.name.trim().replace(/\s+/g, '-') : 'cv') + '.pdf';
+      pdf.save(fileName);
+      btn.textContent = originalText;
+      btn.disabled = false;
+    }).catch(() => {
+      alert("La génération du PDF a échoué. Réessayez, ou utilisez l'export JPEG.");
+      btn.textContent = originalText;
+      btn.disabled = false;
+    });
+  });
+
+  // Export JPEG
+  document.getElementById('downloadJpeg').addEventListener('click', () => {
+    const btn = document.getElementById('downloadJpeg');
+    const originalText = btn.textContent;
+    btn.textContent = 'Génération...';
+    btn.disabled = true;
+    const page = document.getElementById('cvPage');
+    html2canvas(page, { scale: 2, backgroundColor: '#ffffff', useCORS: true }).then(canvas => {
+      canvas.toBlob(blob => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        const fileName = (data.name ? data.name.trim().replace(/\s+/g, '-') : 'cv') + '.jpg';
+        a.href = url;
+        a.download = fileName;
+        a.click();
+        URL.revokeObjectURL(url);
+        btn.textContent = originalText;
+        btn.disabled = false;
+      }, 'image/jpeg', 0.95);
+    }).catch(() => {
+      alert("L'export JPEG a échoué. Réessayez, ou utilisez plutôt l'export PDF.");
+      btn.textContent = originalText;
+      btn.disabled = false;
+    });
+  });
+
+  // ---------- Experiences ----------
+  function addExperience(prefill){
+    const exp = Object.assign({ id:newId(), role:'', company:'', start:'', end:'', current:false, description:'' }, prefill||{});
+    data.experiences.push(exp);
+    renderExpList();
+    renderCV();
+  }
+  function renderExpList(){
+    const list = document.getElementById('expList');
+    list.innerHTML = data.experiences.map(e => `
+      <div class="entry-card" data-id="${e.id}">
+        <button class="remove-btn" data-action="remove-exp" data-id="${e.id}">×</button>
+        <div class="field-row">
+          <div class="field"><label>Poste</label><input type="text" data-field="role" value="${esc(e.role)}"></div>
+        </div>
+        <div class="field"><label>Entreprise</label><input type="text" data-field="company" value="${esc(e.company)}"></div>
+        <div class="field-row">
+          <div class="field"><label>Début</label><input type="text" data-field="start" placeholder="Jan. 2022" value="${esc(e.start)}"></div>
+          <div class="field"><label>Fin</label><input type="text" data-field="end" placeholder="Déc. 2023" value="${esc(e.end)}" ${e.current ? 'disabled' : ''}></div>
+        </div>
+        <label class="checkline"><input type="checkbox" data-field="current" ${e.current?'checked':''}> Poste actuel</label>
+        <div class="field" style="margin-top:10px;"><label>Description</label><textarea data-field="description">${esc(e.description)}</textarea></div>
+      </div>
+    `).join('');
+
+    list.querySelectorAll('.entry-card').forEach(card => {
+      const id = card.dataset.id;
+      const exp = data.experiences.find(x => x.id === id);
+      card.querySelectorAll('[data-field]').forEach(inp => {
+        const evt = inp.type === 'checkbox' ? 'change' : 'input';
+        inp.addEventListener(evt, () => {
+          if(inp.type === 'checkbox'){ exp.current = inp.checked; renderExpList(); }
+          else { exp[inp.dataset.field] = inp.value; }
+          renderCV();
+        });
+      });
+    });
+    list.querySelectorAll('[data-action="remove-exp"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        data.experiences = data.experiences.filter(x => x.id !== btn.dataset.id);
+        renderExpList(); renderCV();
+      });
+    });
+  }
+  document.getElementById('addExp').addEventListener('click', () => addExperience());
+
+  // ---------- Education ----------
+  function addEducation(prefill){
+    const edu = Object.assign({ id:newId(), degree:'', school:'', start:'', end:'', description:'' }, prefill||{});
+    data.education.push(edu);
+    renderEduList();
+    renderCV();
+  }
+  function renderEduList(){
+    const list = document.getElementById('eduList');
+    list.innerHTML = data.education.map(e => `
+      <div class="entry-card" data-id="${e.id}">
+        <button class="remove-btn" data-action="remove-edu" data-id="${e.id}">×</button>
+        <div class="field"><label>Diplôme</label><input type="text" data-field="degree" value="${esc(e.degree)}"></div>
+        <div class="field"><label>Établissement</label><input type="text" data-field="school" value="${esc(e.school)}"></div>
+        <div class="field-row">
+          <div class="field"><label>Début</label><input type="text" data-field="start" value="${esc(e.start)}"></div>
+          <div class="field"><label>Fin</label><input type="text" data-field="end" value="${esc(e.end)}"></div>
+        </div>
+        <div class="field"><label>Détails</label><textarea data-field="description">${esc(e.description)}</textarea></div>
+      </div>
+    `).join('');
+
+    list.querySelectorAll('.entry-card').forEach(card => {
+      const id = card.dataset.id;
+      const edu = data.education.find(x => x.id === id);
+      card.querySelectorAll('[data-field]').forEach(inp => {
+        inp.addEventListener('input', () => { edu[inp.dataset.field] = inp.value; renderCV(); });
+      });
+    });
+    list.querySelectorAll('[data-action="remove-edu"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        data.education = data.education.filter(x => x.id !== btn.dataset.id);
+        renderEduList(); renderCV();
+      });
+    });
+  }
+  document.getElementById('addEdu').addEventListener('click', () => addEducation());
+
+  // ---------- Skills (tags) ----------
+  function renderSkillTags(){
+    const wrap = document.getElementById('skillTags');
+    wrap.innerHTML = data.skills.map((s,i) => `<span class="tag">${esc(s)}<button data-i="${i}">×</button></span>`).join('');
+    wrap.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        data.skills.splice(+btn.dataset.i, 1);
+        renderSkillTags(); renderCV();
+      });
+    });
+  }
+  document.getElementById('skillInput').addEventListener('keydown', function(e){
+    if(e.key === 'Enter' && this.value.trim()){
+      e.preventDefault();
+      data.skills.push(this.value.trim());
+      this.value = '';
+      renderSkillTags(); renderCV();
+    }
+  });
+
+  // ---------- Interests (tags) ----------
+  function renderInterestTags(){
+    const wrap = document.getElementById('interestTags');
+    wrap.innerHTML = data.interests.map((s,i) => `<span class="tag">${esc(s)}<button data-i="${i}">×</button></span>`).join('');
+    wrap.querySelectorAll('button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        data.interests.splice(+btn.dataset.i, 1);
+        renderInterestTags(); renderCV();
+      });
+    });
+  }
+  document.getElementById('interestInput').addEventListener('keydown', function(e){
+    if(e.key === 'Enter' && this.value.trim()){
+      e.preventDefault();
+      data.interests.push(this.value.trim());
+      this.value = '';
+      renderInterestTags(); renderCV();
+    }
+  });
+
+  // ---------- Languages ----------
+  function addLanguage(prefill){
+    const lang = Object.assign({ id:newId(), name:'', level:'Courant' }, prefill||{});
+    data.languages.push(lang);
+    renderLangList();
+    renderCV();
+  }
+  function renderLangList(){
+    const list = document.getElementById('langList');
+    list.innerHTML = data.languages.map(l => `
+      <div class="entry-card" data-id="${l.id}" style="padding:10px 14px;">
+        <button class="remove-btn" data-action="remove-lang" data-id="${l.id}">×</button>
+        <div class="field-row">
+          <div class="field"><label>Langue</label><input type="text" data-field="name" value="${esc(l.name)}" placeholder="Anglais"></div>
+          <div class="field"><label>Niveau</label>
+            <select data-field="level">
+              ${['Notions','Intermédiaire','Courant','Bilingue','Natif'].map(lv => `<option value="${lv}" ${l.level===lv?'selected':''}>${lv}</option>`).join('')}
+            </select>
+          </div>
+        </div>
+      </div>
+    `).join('');
+
+    list.querySelectorAll('.entry-card').forEach(card => {
+      const id = card.dataset.id;
+      const lang = data.languages.find(x => x.id === id);
+      card.querySelectorAll('[data-field]').forEach(inp => {
+        inp.addEventListener('input', () => { lang[inp.dataset.field] = inp.value; renderCV(); });
+      });
+    });
+    list.querySelectorAll('[data-action="remove-lang"]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        data.languages = data.languages.filter(x => x.id !== btn.dataset.id);
+        renderLangList(); renderCV();
+      });
+    });
+  }
+  document.getElementById('addLang').addEventListener('click', () => addLanguage());
+
+  // ---------- Example profiles ----------
+  const EXAMPLES = {
+    pm: {
+      name: 'Claire Dubois',
+      title: 'Cheffe de projet digital',
+      email: 'claire.dubois@mail.com',
+      phone: '06 12 34 56 78',
+      location: 'Lyon, France',
+      link: 'linkedin.com/in/clairedubois',
+      summary: "Cheffe de projet digital avec 6 ans d'expérience dans le pilotage de produits web. Passionnée par l'expérience utilisateur et la coordination d'équipes pluridisciplinaires.",
+      experiences: [
+        { role:'Cheffe de projet digital', company:'Lumière Studio', start:'Mars 2022', end:'', current:true, description:"Pilotage de 5 projets web simultanés, coordination d'une équipe de 8 personnes, mise en place de rituels agiles." },
+        { role:'Chargée de projet', company:'NovaTech', start:'Sept. 2019', end:'Fév. 2022', current:false, description:"Suivi de la production de sites e-commerce, relation client et rédaction de cahiers des charges." }
+      ],
+      education: [
+        { degree:'Master Management de Projets Digitaux', school:'Université Lyon 2', start:'2017', end:'2019', description:'' },
+        { degree:'Licence Communication', school:'Université Lyon 3', start:'2014', end:'2017', description:'' }
+      ],
+      skills: ['Gestion de projet','Agile / Scrum','Figma','Notion','Relation client'],
+      languages: [ { name:'Français', level:'Natif' }, { name:'Anglais', level:'Courant' } ],
+      interests: ['Photographie','Course à pied','Voyages']
+    },
+    dev: {
+      name: 'Kodjo Amoussou',
+      title: 'Développeur web full-stack',
+      email: 'kodjo.amoussou@mail.com',
+      phone: '+228 90 12 34 56',
+      location: 'Lomé, Togo',
+      link: 'github.com/kamoussou',
+      summary: "Développeur full-stack avec 4 ans d'expérience en JavaScript, Node.js et React. Aime concevoir des applications rapides, accessibles et maintenables.",
+      experiences: [
+        { role:'Développeur full-stack', company:'Digital Forge', start:'Jan. 2023', end:'', current:true, description:"Conception d'API REST avec Node.js/Express, interfaces React, intégration MongoDB et déploiement CI/CD." },
+        { role:'Développeur front-end', company:'WebLabs Togo', start:'Juin 2021', end:'Déc. 2022', current:false, description:"Intégration de maquettes en React, optimisation des performances et des temps de chargement." }
+      ],
+      education: [
+        { degree:'Licence Informatique', school:'Université de Lomé', start:'2018', end:'2021', description:'' }
+      ],
+      skills: ['JavaScript','React','Node.js','MongoDB','Git','Docker'],
+      languages: [ { name:'Français', level:'Natif' }, { name:'Anglais', level:'Intermédiaire' } ],
+      interests: ['Open source','Jeux vidéo','Musique afrobeat']
+    },
+    commercial: {
+      name: 'Aïcha Traoré',
+      title: 'Commerciale B2B',
+      email: 'aicha.traore@mail.com',
+      phone: '+225 07 12 34 56',
+      location: 'Abidjan, Côte d\u2019Ivoire',
+      link: 'linkedin.com/in/aichatraore',
+      summary: "Commerciale avec 5 ans d'expérience en développement de portefeuille clients dans le secteur agroalimentaire. Orientée résultats et relation de confiance durable.",
+      experiences: [
+        { role:'Chargée de clientèle grands comptes', company:'AgroPlus', start:'Fév. 2022', end:'', current:true, description:"Développement d'un portefeuille de 40 clients, croissance du chiffre d'affaires de 22 % en un an." },
+        { role:'Commerciale terrain', company:'Sahel Distribution', start:'Sept. 2019', end:'Jan. 2022', current:false, description:"Prospection, négociation et fidélisation de points de vente sur 3 régions." }
+      ],
+      education: [
+        { degree:'BTS Négociation et Relation Client', school:'ESCA Abidjan', start:'2017', end:'2019', description:'' }
+      ],
+      skills: ['Négociation','Prospection','CRM','Relation client','Reporting commercial'],
+      languages: [ { name:'Français', level:'Natif' }, { name:'Anglais', level:'Intermédiaire' } ],
+      interests: ['Basketball','Cuisine','Entrepreneuriat']
+    },
+    teacher: {
+      name: 'Marc Lefebvre',
+      title: 'Enseignant de mathématiques',
+      email: 'marc.lefebvre@mail.com',
+      phone: '06 45 67 89 10',
+      location: 'Bordeaux, France',
+      link: '',
+      summary: "Enseignant de mathématiques au collège depuis 7 ans, engagé dans la pédagogie différenciée et l'accompagnement des élèves en difficulté.",
+      experiences: [
+        { role:'Professeur de mathématiques', company:'Collège Jean Moulin', start:'Sept. 2018', end:'', current:true, description:"Enseignement aux classes de 4e et 3e, mise en place d'ateliers de soutien scolaire." },
+        { role:'Professeur contractuel', company:'Collège Voltaire', start:'Sept. 2016', end:'Juin 2018', current:false, description:"Enseignement en classes de 6e et 5e, suivi individualisé des élèves." }
+      ],
+      education: [
+        { degree:'Master MEEF Mathématiques', school:'Université de Bordeaux', start:'2014', end:'2016', description:'' }
+      ],
+      skills: ['Pédagogie différenciée','Gestion de classe','Outils numériques éducatifs'],
+      languages: [ { name:'Français', level:'Natif' }, { name:'Espagnol', level:'Intermédiaire' } ],
+      interests: ['Lecture','Échecs','Randonnée']
+    },
+    nurse: {
+      name: 'Fatou Mensah',
+      title: 'Infirmière diplômée d\u2019État',
+      email: 'fatou.mensah@mail.com',
+      phone: '+228 91 23 45 67',
+      location: 'Kara, Togo',
+      link: '',
+      summary: "Infirmière avec 5 ans d'expérience en soins généraux et pédiatriques, rigoureuse et à l'écoute des patients.",
+      experiences: [
+        { role:'Infirmière en pédiatrie', company:'Hôpital Régional de Kara', start:'Avr. 2021', end:'', current:true, description:"Soins infirmiers, suivi post-opératoire et éducation des familles aux bonnes pratiques de santé." },
+        { role:'Infirmière polyvalente', company:'Centre de Santé de Vogan', start:'Jan. 2019', end:'Mars 2021', current:false, description:"Consultations, vaccinations et premiers secours en zone rurale." }
+      ],
+      education: [
+        { degree:'Diplôme d\u2019État Infirmier', school:'École Nationale des Auxiliaires Médicaux, Lomé', start:'2016', end:'2019', description:'' }
+      ],
+      skills: ['Soins infirmiers','Urgences','Pédiatrie','Relation patient'],
+      languages: [ { name:'Français', level:'Natif' }, { name:'Ewé', level:'Natif' } ],
+      interests: ['Bénévolat médical','Chant','Couture']
+    },
+    student: {
+      name: 'Julie Nguyen',
+      title: 'Étudiante en marketing — recherche de stage',
+      email: 'julie.nguyen@mail.com',
+      phone: '06 78 90 12 34',
+      location: 'Nantes, France',
+      link: 'linkedin.com/in/julienguyen',
+      summary: "Étudiante en 3e année de marketing, curieuse et motivée, à la recherche d'un stage en communication digitale à partir de septembre.",
+      experiences: [
+        { role:'Stagiaire communication', company:'Association Culture & Co', start:'Juin 2025', end:'Août 2025', current:false, description:"Création de contenus pour les réseaux sociaux et suivi des statistiques d'engagement." }
+      ],
+      education: [
+        { degree:'Licence Marketing (en cours)', school:'Université de Nantes', start:'2023', end:'2026', description:'' },
+        { degree:'Baccalauréat général', school:'Lycée Clemenceau', start:'2020', end:'2023', description:'' }
+      ],
+      skills: ['Réseaux sociaux','Canva','Rédaction web','Travail d\u2019équipe'],
+      languages: [ { name:'Français', level:'Natif' }, { name:'Anglais', level:'Courant' } ],
+      interests: ['Photographie','Voyages','Bénévolat']
+    }
+  };
+
+  document.getElementById('exampleSelect').addEventListener('change', function(){
+    const key = this.value;
+    if(!key || !EXAMPLES[key]) return;
+    const example = EXAMPLES[key];
+    Object.assign(data, {
+      name:'', title:'', email:'', phone:'', location:'', link:'', photo:'', summary:'',
+      experiences: [], education: [], skills: [], languages: [], interests: []
+    }, example);
+    currentCvId = null;
+    document.getElementById('cvNameInput').value = '';
+    fillFormFromData();
+    this.value = '';
+  });
+
+  // ---------- Reset current CV (used by "Effacer tout" and "Nouveau CV") ----------
+  function resetCurrentCV(){
+    Object.assign(data, {
+      name:'', title:'', email:'', phone:'', location:'', link:'', photo:'', summary:'',
+      experiences: [], education: [], skills: [], languages: [], interests: []
+    });
+    currentCvId = null;
+    document.querySelectorAll('.desk input[type=text], .desk input[type=email], .desk input[type=tel], .desk textarea').forEach(el => el.value = '');
+    document.getElementById('photoPreview').style.backgroundImage = '';
+    document.getElementById('photoPreview').textContent = 'Photo';
+    renderExpList(); renderEduList(); renderLangList();
+    renderSkillTags(); renderInterestTags();
+    renderCV();
+    renderSavedCvList();
+  }
+
+  document.getElementById('clearAll').addEventListener('click', () => {
+    if(!confirm('Effacer toutes les informations du CV ?')) return;
+    resetCurrentCV();
+  });
+  document.getElementById('newCvBtn').addEventListener('click', () => resetCurrentCV());
+  document.getElementById('saveCvBtn').addEventListener('click', () => saveCurrentCV());
+
+  // ---------- Multi-CV storage ----------
+  // Priority: window.storage (persists across sessions inside Claude) →
+  // localStorage (persists across sessions when the file is opened directly in a browser) →
+  // in-memory (last resort, lost on reload).
+  let currentCvId = null;
+  const memoryStore = {};
+  const LS_PREFIX = 'goodcv:';
+  let baseStorageHint = '';
+
+  function localStorageAvailable(){
+    try{
+      const k = '__goodcv_test__';
+      window.localStorage.setItem(k, '1');
+      window.localStorage.removeItem(k);
+      return true;
+    }catch(e){ return false; }
+  }
+
+  async function storageGet(key){
+    try{
+      if(window.storage){
+        const r = await window.storage.get(key, false);
+        return r ? r.value : null;
+      }
+    }catch(e){ /* key absent or storage unavailable */ }
+    try{
+      const v = window.localStorage.getItem(LS_PREFIX + key);
+      if(v !== null) return v;
+    }catch(e){ /* localStorage unavailable */ }
+    return Object.prototype.hasOwnProperty.call(memoryStore, key) ? memoryStore[key] : null;
+  }
+  async function storageSet(key, value){
+    try{
+      if(window.storage){ await window.storage.set(key, value, false); return; }
+    }catch(e){ /* fall through */ }
+    try{
+      window.localStorage.setItem(LS_PREFIX + key, value);
+      return;
+    }catch(e){ /* fall through */ }
+    memoryStore[key] = value;
+  }
+  async function storageDelete(key){
+    try{
+      if(window.storage){ await window.storage.delete(key, false); return; }
+    }catch(e){ /* fall through */ }
+    try{
+      window.localStorage.removeItem(LS_PREFIX + key);
+      return;
+    }catch(e){ /* fall through */ }
+    delete memoryStore[key];
+  }
+
+  async function getIndex(){
+    const raw = await storageGet('cv-index');
+    if(!raw) return [];
+    try{ return JSON.parse(raw); }catch(e){ return []; }
+  }
+  async function setIndex(list){
+    await storageSet('cv-index', JSON.stringify(list));
+  }
+
+  async function saveCurrentCV(){
+    const nameInput = document.getElementById('cvNameInput');
+    let name = nameInput.value.trim();
+    if(!name){ name = data.name ? data.name + ' — CV' : 'CV sans titre'; nameInput.value = name; }
+    const index = await getIndex();
+    const id = currentCvId || newId();
+    currentCvId = id;
+    await storageSet('cv:' + id, JSON.stringify(data));
+    const now = new Date().toISOString();
+    const entry = { id, name, updatedAt: now };
+    const existingIdx = index.findIndex(e => e.id === id);
+    if(existingIdx >= 0) index[existingIdx] = entry; else index.unshift(entry);
+    await setIndex(index);
+    await renderSavedCvList();
+    const hint = document.getElementById('savedCvHint');
+    hint.textContent = 'Enregistré ✓';
+    setTimeout(() => { if(hint.textContent === 'Enregistré ✓') hint.textContent = baseStorageHint; }, 2500);
+  }
+
+  async function loadSavedCV(id){
+    const raw = await storageGet('cv:' + id);
+    if(!raw){ alert("Ce CV n'a pas pu être chargé."); return; }
+    let saved;
+    try{ saved = JSON.parse(raw); }catch(e){ alert('Ce fichier de sauvegarde est corrompu.'); return; }
+    Object.assign(data, {
+      name:'', title:'', email:'', phone:'', location:'', link:'', photo:'', summary:'',
+      experiences: [], education: [], skills: [], languages: [], interests: [],
+      template: data.template, accent: data.accent
+    }, saved);
+    currentCvId = id;
+    const index = await getIndex();
+    const entry = index.find(e => e.id === id);
+    document.getElementById('cvNameInput').value = entry ? entry.name : '';
+    fillFormFromData();
+    await renderSavedCvList();
+  }
+
+  async function deleteSavedCV(id){
+    if(!confirm('Supprimer définitivement ce CV enregistré ?')) return;
+    await storageDelete('cv:' + id);
+    let index = await getIndex();
+    index = index.filter(e => e.id !== id);
+    await setIndex(index);
+    if(currentCvId === id) currentCvId = null;
+    await renderSavedCvList();
+  }
+
+  async function renderSavedCvList(){
+    const wrap = document.getElementById('savedCvList');
+    const index = await getIndex();
+    if(!index.length){ wrap.innerHTML = ''; return; }
+    index.sort((a,b) => new Date(b.updatedAt) - new Date(a.updatedAt));
+    wrap.innerHTML = index.map(e => {
+      const d = new Date(e.updatedAt);
+      const dateStr = d.toLocaleDateString('fr-FR', { day:'2-digit', month:'short' });
+      return `
+        <div class="cv-save-row ${e.id === currentCvId ? 'current' : ''}">
+          <div class="cv-save-info">
+            <div class="cv-save-name">${esc(e.name)}</div>
+            <div class="cv-save-date">Modifié le ${dateStr}</div>
+          </div>
+          <div class="cv-save-actions">
+            <button class="btn btn-sm" data-action="load-cv" data-id="${e.id}">Charger</button>
+            <button class="btn btn-sm" data-action="delete-cv" data-id="${e.id}">×</button>
+          </div>
+        </div>
+      `;
+    }).join('');
+    wrap.querySelectorAll('[data-action="load-cv"]').forEach(btn => {
+      btn.addEventListener('click', () => loadSavedCV(btn.dataset.id));
+    });
+    wrap.querySelectorAll('[data-action="delete-cv"]').forEach(btn => {
+      btn.addEventListener('click', () => deleteSavedCV(btn.dataset.id));
+    });
+  }
+
+  function fillFormFromData(){
+    document.getElementById('f-name').value = data.name || '';
+    document.getElementById('f-title').value = data.title || '';
+    document.getElementById('f-email').value = data.email || '';
+    document.getElementById('f-phone').value = data.phone || '';
+    document.getElementById('f-location').value = data.location || '';
+    document.getElementById('f-link').value = data.link || '';
+    document.getElementById('f-summary').value = data.summary || '';
+    document.getElementById('photoPreview').style.backgroundImage = data.photo ? `url('${data.photo}')` : '';
+    document.getElementById('photoPreview').textContent = data.photo ? '' : 'Photo';
+    data.experiences = (data.experiences || []).map(e => ({ ...e, id: e.id || newId() }));
+    data.education = (data.education || []).map(e => ({ ...e, id: e.id || newId() }));
+    data.languages = (data.languages || []).map(e => ({ ...e, id: e.id || newId() }));
+    data.skills = data.skills || [];
+    data.interests = data.interests || [];
+    document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.template === data.template));
+    document.getElementById('accentPicker').value = data.accent || '#1f6f63';
+    renderExpList(); renderEduList(); renderLangList();
+    renderSkillTags(); renderInterestTags();
+    renderCV();
+  }
+
+  // ---------- Init ----------
+  renderExpList();
+  renderEduList();
+  renderLangList();
+  renderSkillTags();
+  renderInterestTags();
+  renderCV();
+  renderSavedCvList();
+  if(!window.storage){
+    baseStorageHint = localStorageAvailable()
+      ? 'Vos CV enregistrés restent disponibles sur cet appareil et ce navigateur.'
+      : 'Sauvegarde valable pour cette session seulement (stockage du navigateur bloqué).';
+    document.getElementById('savedCvHint').textContent = baseStorageHint;
+  }
+})();
+</script>
+</body>
+</html>

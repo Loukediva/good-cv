@@ -3,9 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="google-site-verification" content="Z-AIoi3VWw0z9khtCG4u32nBiwLXOIpZMucpv3ybd-A" />
 <title>GOOD CV — Créez votre CV</title>
+<meta name="description" content="Créez et téléchargez un CV professionnel, moderne et optimisé pour les recruteurs en quelques clics avec Good CV.">
+<!-- Balises Open Graph pour le partage sur les réseaux sociaux (WhatsApp, Facebook...) -->
+    <meta property="og:title" content="Good CV | Générateur de CV Professionnel">
+    <meta property="og:description" content="Concevez votre CV moderne en quelques minutes.">
+    <meta property="og:url" content="https://good-cv-nine.vercel.app/">
+    <meta property="og:type" content="website">
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&family=Playfair+Display:wght@600;700&family=Lora:wght@400;500;600&family=Poppins:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
 :root{
   --ink: #14171f;
@@ -29,7 +36,6 @@ body{
   background: var(--ink);
   color: var(--ink-text);
   min-height:100vh;
-  overflow-x:hidden;
 }
 ::selection{ background: var(--accent); color:#fff; }
 
@@ -76,7 +82,7 @@ button, input, textarea, select{ font-family:inherit; }
 }
 
 .workspace{
-  flex:1; display:grid; grid-template-columns: minmax(300px, 460px) minmax(0, 1fr);
+  flex:1; display:grid; grid-template-columns: minmax(360px, 460px) 1fr;
   min-height:0;
 }
 
@@ -85,9 +91,8 @@ button, input, textarea, select{ font-family:inherit; }
   background: var(--ink);
   border-right: 1px solid var(--ink-line);
   padding: 26px 26px 80px;
-  overflow-y:auto; overflow-x:hidden;
+  overflow-y:auto;
   max-height: calc(100vh - 65px);
-  min-width:0;
 }
 .desk-section{
   margin-bottom: 30px;
@@ -162,24 +167,22 @@ button, input, textarea, select{ font-family:inherit; }
 .hint{ font-size:11px; color: var(--ink-muted); margin-top:4px; }
 
 .cv-save-row{
-  display:flex; flex-direction:column; gap:8px; padding: 10px 12px;
+  display:flex; align-items:center; gap:8px; padding: 8px 10px;
   background: var(--ink-soft); border:1px solid var(--ink-line); border-radius:7px;
   margin-bottom:8px;
 }
 .cv-save-row.current{ border-color: var(--accent); }
-.cv-save-info{ min-width:0; }
+.cv-save-info{ flex:1; min-width:0; }
 .cv-save-name{ font-size:12.5px; font-weight:600; color: var(--ink-text); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
 .cv-save-date{ font-size:10.5px; color: var(--ink-muted); font-family:'IBM Plex Mono', monospace; }
-.cv-save-actions{ display:flex; gap:4px; flex-wrap:wrap; }
-.cv-save-actions .btn{ flex:1; text-align:center; white-space:nowrap; }
+.cv-save-actions{ display:flex; gap:4px; flex-shrink:0; }
 
 /* ---------- Preview column ---------- */
 .preview-wrap{
   background: #0c0e14;
   display:flex; flex-direction:column; align-items:center;
-  overflow-y:auto; overflow-x:hidden; max-height: calc(100vh - 65px);
+  overflow-y:auto; max-height: calc(100vh - 65px);
   padding: 30px 30px 70px;
-  min-width:0;
 }
 
 .tabs{
@@ -206,41 +209,38 @@ button, input, textarea, select{ font-family:inherit; }
   background: var(--paper); color: var(--text-dark);
   box-shadow: 0 20px 60px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.2);
   padding: 56px 60px;
-  font-family: var(--cv-body-font, 'Inter', sans-serif);
+  font-family:'Inter', sans-serif;
   border-radius: 0 4px 4px 4px;
-  box-sizing: border-box;
 }
 .cv-eyebrow{
   font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:0.1em;
   text-transform:uppercase; color: var(--accent); margin: 0 0 10px;
 }
 .cv-header{ display:flex; gap:24px; align-items:center; margin-bottom: 34px; }
-.cv-header-text{ min-width:0; flex:1; }
 .cv-photo{
   width:96px; height:96px; border-radius:50%; background-size:cover; background-position:center;
   background-color:#eee; flex-shrink:0; border: 2px solid var(--paper-line);
 }
-.cv-name{ font-family: var(--cv-heading-font, 'Fraunces', serif); font-weight:700; font-size: 34px; margin:0 0 4px; letter-spacing:-0.01em; line-height:1.1; overflow-wrap:break-word; word-break:break-word;}
-.cv-role{ font-size:16px; color: var(--accent); font-weight:600; margin:0 0 10px; overflow-wrap:break-word; }
-.cv-contacts{ display:flex; flex-wrap:wrap; gap: 4px 14px; font-size:12.5px; color: var(--text-muted); overflow-wrap:break-word; word-break:break-word; min-width:0; }
+.cv-name{ font-family:'Fraunces', serif; font-weight:700; font-size: 34px; margin:0 0 4px; letter-spacing:-0.01em; line-height:1.1;}
+.cv-role{ font-size:16px; color: var(--accent); font-weight:600; margin:0 0 10px; }
+.cv-contacts{ display:flex; flex-wrap:wrap; gap: 4px 14px; font-size:12.5px; color: var(--text-muted); }
 
-.cv-body{ display:grid; grid-template-columns: 2fr 1fr; gap: 40px; min-width:0; }
-.cv-main, .cv-side{ min-width:0; }
+.cv-body{ display:grid; grid-template-columns: 2fr 1fr; gap: 40px; }
 .cv-section{ margin-bottom: 26px; }
 .cv-section h3{
   font-family:'IBM Plex Mono', monospace; font-size:11.5px; text-transform:uppercase;
   letter-spacing:0.1em; color: var(--text-dark); margin: 0 0 14px; padding-bottom:8px;
   border-bottom: 1px solid var(--paper-line);
 }
-.cv-summary p{ font-size: 13.5px; line-height:1.65; color:#333; margin:0; overflow-wrap:break-word; }
+.cv-summary p{ font-size: 13.5px; line-height:1.65; color:#333; margin:0; }
 
 .exp-item, .edu-item{ margin-bottom: 18px; }
 .exp-item:last-child, .edu-item:last-child{ margin-bottom:0; }
-.item-top{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; flex-wrap:wrap; }
-.item-title{ font-weight:700; font-size:14px; overflow-wrap:break-word; word-break:break-word; }
-.item-sub{ font-size:12.5px; color: var(--accent); font-weight:600; margin-top:1px; overflow-wrap:break-word; }
+.item-top{ display:flex; justify-content:space-between; align-items:baseline; gap:10px; }
+.item-title{ font-weight:700; font-size:14px; }
+.item-sub{ font-size:12.5px; color: var(--accent); font-weight:600; margin-top:1px;}
 .item-dates{ font-family:'IBM Plex Mono', monospace; font-size:10.5px; color: var(--text-muted); white-space:nowrap; }
-.item-desc{ font-size:12.5px; color:#444; line-height:1.55; margin-top:6px; overflow-wrap:break-word; }
+.item-desc{ font-size:12.5px; color:#444; line-height:1.55; margin-top:6px; }
 
 .skill-pill{
   display:inline-block; font-size:12px; padding: 4px 11px; margin: 0 6px 6px 0;
@@ -265,7 +265,7 @@ button, input, textarea, select{ font-family:inherit; }
 }
 .template-moderne .cv-side h3{ color:#fff; border-bottom-color: rgba(255,255,255,0.3); }
 .template-moderne .cv-photo{ width:110px; height:110px; margin: 0 auto 20px; display:block; border-color: rgba(255,255,255,0.5); }
-.template-moderne .side-name{ display:block; font-family: var(--cv-heading-font, 'Fraunces', serif); font-weight:700; font-size:22px; text-align:center; margin:0 0 4px; overflow-wrap:break-word; }
+.template-moderne .side-name{ display:block; font-family:'Fraunces', serif; font-weight:700; font-size:22px; text-align:center; margin:0 0 4px; }
 .template-moderne .side-role{ display:block; text-align:center; font-size:12.5px; opacity:0.85; margin:0 0 24px; }
 .template-moderne .side-contacts{ display:block; font-size:11.5px; line-height:2; opacity:0.9; word-break:break-word; }
 .template-moderne .skill-pill{ border-color: rgba(255,255,255,0.4); color:#fff; }
@@ -321,23 +321,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 <div class="app">
   <header class="topbar">
     <div class="brand">
-      <a href="https://loukediva.github.io/ekatech/index.html#services" style="display:flex; align-items:center; gap:6px; color: var(--ink-muted); text-decoration:none; font-size:12px; font-weight:600; margin-right:14px; border-right:1px solid var(--ink-line); padding-right:14px;" onmouseover="this.style.color='var(--accent)'" onmouseout="this.style.color='var(--ink-muted)'">
-        ← EKA Tech
-      </a>
       <span class="brand-mark">GOOD CV</span>
       <span class="brand-sub">Fabriqué à la main, en direct</span>
     </div>
     <div class="topbar-actions">
       <label class="color-swatch">Accent
         <input type="color" id="accentPicker" value="#1f6f63">
-      </label>
-      <label class="color-swatch" title="Change les polices utilisées dans le CV">Police
-        <select id="fontSelect" style="background:var(--ink-soft); color:var(--ink-text); border:1px solid var(--ink-line); border-radius:6px; padding:5px 8px; font-family:'Inter',sans-serif; font-size:12px;">
-          <option value="fraunces-inter" selected>Fraunces / Inter</option>
-          <option value="playfair-lora">Playfair / Lora</option>
-          <option value="poppins">Poppins</option>
-          <option value="plex">IBM Plex Sans</option>
-        </select>
       </label>
       <label class="color-swatch" title="Affecte uniquement le PDF téléchargé (l'aperçu reste affiché en A4)">Format
         <select id="paperFormat" style="background:var(--ink-soft); color:var(--ink-text); border:1px solid var(--ink-line); border-radius:6px; padding:5px 8px; font-family:'Inter',sans-serif; font-size:12px;">
@@ -444,18 +433,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
         <div class="field"><input type="text" id="interestInput" placeholder="Tapez un centre d'intérêt puis Entrée"></div>
       </div>
 
-      <div class="desk-section">
-        <p class="desk-title">Rubriques personnalisées</p>
-        <p class="hint" style="margin-bottom:10px;">Ajoutez des sections libres : Projets, Références, Certifications, Publications…</p>
-        <div id="customSectionsList"></div>
-        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-top:8px;">
-          <button class="btn btn-sm" data-quick-section="Projets">+ Projets</button>
-          <button class="btn btn-sm" data-quick-section="Références">+ Références</button>
-          <button class="btn btn-sm" data-quick-section="Certifications">+ Certifications</button>
-          <button class="btn btn-sm" id="addCustomSectionBtn">+ Autre…</button>
-        </div>
-      </div>
-
     </section>
 
     <!-- ============ PREVIEW ============ -->
@@ -466,7 +443,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
         <button class="tab" data-template="minimal">Minimal</button>
       </div>
       <div class="cv-page template-classique" id="cvPage"></div>
-      <p class="footer-note">Aperçu mis à jour en direct — cliquez sur « Télécharger en PDF » pour imprimer ou enregistrer.<br>Un outil <a href="https://loukediva.github.io/ekatech/index.html#services" style="color:var(--accent); text-decoration:none;">EKA Tech</a>.</p>
+      <p class="footer-note">Aperçu mis à jour en direct — cliquez sur « Télécharger en PDF » pour imprimer ou enregistrer.</p>
     </section>
   </main>
 </div>
@@ -484,17 +461,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     skills: [],
     languages: [],
     interests: [],
-    customSections: [],
     template: 'classique',
-    accent: '#1f6f63',
-    font: 'fraunces-inter'
-  };
-
-  const FONT_PRESETS = {
-    'fraunces-inter': { heading: "'Fraunces', serif", body: "'Inter', sans-serif" },
-    'playfair-lora': { heading: "'Playfair Display', serif", body: "'Lora', serif" },
-    'poppins': { heading: "'Poppins', sans-serif", body: "'Poppins', sans-serif" },
-    'plex': { heading: "'IBM Plex Sans', sans-serif", body: "'IBM Plex Sans', sans-serif" }
+    accent: '#1f6f63'
   };
 
   function newId(){ return 'id' + (uid++); }
@@ -559,43 +527,17 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     return `<p class="interest-line">${data.interests.map(esc).join(' &nbsp;·&nbsp; ')}</p>`;
   }
 
-  function renderCustomSectionsPreview(){
-    if(!data.customSections.length) return '';
-    return data.customSections.map(sec => {
-      const entriesHtml = sec.entries.length ? sec.entries.map(en => `
-        <div class="exp-item">
-          <div class="item-top">
-            <div>
-              <div class="item-title">${esc(en.heading) || 'Titre'}</div>
-              ${en.subheading ? `<div class="item-sub">${esc(en.subheading)}</div>` : ''}
-            </div>
-          </div>
-          ${en.description ? `<div class="item-desc">${nl2br(en.description)}</div>` : ''}
-        </div>
-      `).join('') : '<p class="empty-note">Aucun élément ajouté.</p>';
-      return `
-        <div class="cv-section">
-          <h3>${esc(sec.title) || 'Rubrique'}</h3>
-          ${entriesHtml}
-        </div>
-      `;
-    }).join('');
-  }
-
   function renderCV(){
     const page = document.getElementById('cvPage');
     page.className = 'cv-page template-' + data.template;
     page.style.setProperty('--accent', data.accent);
-    const preset = FONT_PRESETS[data.font] || FONT_PRESETS['fraunces-inter'];
-    page.style.setProperty('--cv-heading-font', preset.heading);
-    page.style.setProperty('--cv-body-font', preset.body);
 
     const photoHtml = data.photo ? `style="background-image:url('${data.photo}')"` : '';
 
     page.innerHTML = `
       <div class="cv-header">
         <div class="cv-photo" ${photoHtml}></div>
-        <div class="cv-header-text">
+        <div>
           <p class="cv-eyebrow">Curriculum Vitae</p>
           <h1 class="cv-name">${esc(data.name) || 'Votre nom'}</h1>
           <p class="cv-role">${esc(data.title) || 'Votre titre / poste recherché'}</p>
@@ -616,7 +558,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
             <h3>Formation</h3>
             ${renderEducation()}
           </div>
-          ${renderCustomSectionsPreview()}
         </div>
         <aside class="cv-side">
           <div class="photo-slot" style="display:none"></div>
@@ -680,12 +621,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   // Accent color
   document.getElementById('accentPicker').addEventListener('input', function(e){
     data.accent = e.target.value;
-    renderCV();
-  });
-
-  // Font choice
-  document.getElementById('fontSelect').addEventListener('change', function(e){
-    data.font = e.target.value;
     renderCV();
   });
 
@@ -1067,7 +1002,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     const example = EXAMPLES[key];
     Object.assign(data, {
       name:'', title:'', email:'', phone:'', location:'', link:'', photo:'', summary:'',
-      experiences: [], education: [], skills: [], languages: [], interests: [], customSections: []
+      experiences: [], education: [], skills: [], languages: [], interests: []
     }, example);
     currentCvId = null;
     document.getElementById('cvNameInput').value = '';
@@ -1075,94 +1010,18 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     this.value = '';
   });
 
-  // ---------- Custom sections (Projets, Références, etc.) ----------
-  function addCustomSection(title){
-    data.customSections.push({ id: newId(), title: title, entries: [] });
-    renderCustomSectionsList();
-    renderCV();
-  }
-
-  document.querySelectorAll('[data-quick-section]').forEach(btn => {
-    btn.addEventListener('click', () => addCustomSection(btn.dataset.quickSection));
-  });
-  document.getElementById('addCustomSectionBtn').addEventListener('click', () => {
-    const name = prompt('Nom de la rubrique (ex : Publications, Bénévolat, Portfolio…)', '');
-    if(name && name.trim()) addCustomSection(name.trim());
-  });
-
-  function renderCustomSectionsList(){
-    const wrap = document.getElementById('customSectionsList');
-    wrap.innerHTML = data.customSections.map(sec => `
-      <div class="entry-card" data-sec-id="${sec.id}" style="border-color:var(--accent);">
-        <button class="remove-btn" data-action="remove-section" data-id="${sec.id}" title="Supprimer la rubrique">×</button>
-        <div class="field"><label>Titre de la rubrique</label><input type="text" data-field="title" value="${esc(sec.title)}"></div>
-        <div class="custom-entries" data-entries-for="${sec.id}"></div>
-        <button class="add-btn" data-action="add-entry" data-id="${sec.id}" style="margin-top:6px;">+ Ajouter un élément</button>
-      </div>
-    `).join('');
-
-    data.customSections.forEach(sec => {
-      const container = wrap.querySelector(`[data-entries-for="${sec.id}"]`);
-      if(!container) return;
-      container.innerHTML = sec.entries.map(en => `
-        <div class="entry-card" data-entry-id="${en.id}" style="margin-top:8px;">
-          <button class="remove-btn" data-action="remove-entry" data-sec="${sec.id}" data-id="${en.id}">×</button>
-          <div class="field"><label>Titre</label><input type="text" data-field="heading" value="${esc(en.heading)}" placeholder="Ex : Nom du projet, nom de la référence…"></div>
-          <div class="field"><label>Sous-titre</label><input type="text" data-field="subheading" value="${esc(en.subheading)}" placeholder="Ex : Rôle, fonction, contact…"></div>
-          <div class="field"><label>Détails</label><textarea data-field="description">${esc(en.description)}</textarea></div>
-        </div>
-      `).join('');
-      container.querySelectorAll('.entry-card').forEach(card => {
-        const enId = card.dataset.entryId;
-        const entry = sec.entries.find(e => e.id === enId);
-        card.querySelectorAll('[data-field]').forEach(inp => {
-          inp.addEventListener('input', () => { entry[inp.dataset.field] = inp.value; renderCV(); });
-        });
-      });
-    });
-
-    wrap.querySelectorAll('[data-sec-id]').forEach(card => {
-      const sec = data.customSections.find(s => s.id === card.dataset.secId);
-      const titleInput = card.querySelector('[data-field="title"]');
-      if(titleInput){
-        titleInput.addEventListener('input', () => { sec.title = titleInput.value; renderCV(); });
-      }
-    });
-    wrap.querySelectorAll('[data-action="remove-section"]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        if(!confirm('Supprimer cette rubrique et son contenu ?')) return;
-        data.customSections = data.customSections.filter(s => s.id !== btn.dataset.id);
-        renderCustomSectionsList(); renderCV();
-      });
-    });
-    wrap.querySelectorAll('[data-action="add-entry"]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const sec = data.customSections.find(s => s.id === btn.dataset.id);
-        sec.entries.push({ id: newId(), heading:'', subheading:'', description:'' });
-        renderCustomSectionsList(); renderCV();
-      });
-    });
-    wrap.querySelectorAll('[data-action="remove-entry"]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const sec = data.customSections.find(s => s.id === btn.dataset.sec);
-        sec.entries = sec.entries.filter(e => e.id !== btn.dataset.id);
-        renderCustomSectionsList(); renderCV();
-      });
-    });
-  }
-
   // ---------- Reset current CV (used by "Effacer tout" and "Nouveau CV") ----------
   function resetCurrentCV(){
     Object.assign(data, {
       name:'', title:'', email:'', phone:'', location:'', link:'', photo:'', summary:'',
-      experiences: [], education: [], skills: [], languages: [], interests: [], customSections: []
+      experiences: [], education: [], skills: [], languages: [], interests: []
     });
     currentCvId = null;
     document.querySelectorAll('.desk input[type=text], .desk input[type=email], .desk input[type=tel], .desk textarea').forEach(el => el.value = '');
     document.getElementById('photoPreview').style.backgroundImage = '';
     document.getElementById('photoPreview').textContent = 'Photo';
     renderExpList(); renderEduList(); renderLangList();
-    renderSkillTags(); renderInterestTags(); renderCustomSectionsList();
+    renderSkillTags(); renderInterestTags();
     renderCV();
     renderSavedCvList();
   }
@@ -1261,7 +1120,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     try{ saved = JSON.parse(raw); }catch(e){ alert('Ce fichier de sauvegarde est corrompu.'); return; }
     Object.assign(data, {
       name:'', title:'', email:'', phone:'', location:'', link:'', photo:'', summary:'',
-      experiences: [], education: [], skills: [], languages: [], interests: [], customSections: [],
+      experiences: [], education: [], skills: [], languages: [], interests: [],
       template: data.template, accent: data.accent
     }, saved);
     currentCvId = id;
@@ -1271,21 +1130,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     fillFormFromData();
     await renderSavedCvList();
   }
-
-  async function duplicateSavedCV(id){
-    const raw = await storageGet('cv:' + id);
-    if(!raw){ alert("Ce CV n'a pas pu être dupliqué."); return; }
-    const index = await getIndex();
-    const original = index.find(e => e.id === id);
-    const newIdValue = newId();
-    await storageSet('cv:' + newIdValue, raw);
-    const entry = { id: newIdValue, name: (original ? original.name : 'CV') + ' (copie)', updatedAt: new Date().toISOString() };
-    index.unshift(entry);
-    await setIndex(index);
-    await renderSavedCvList();
-    await loadSavedCV(newIdValue);
-  }
-
 
   async function deleteSavedCV(id){
     if(!confirm('Supprimer définitivement ce CV enregistré ?')) return;
@@ -1313,7 +1157,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
           </div>
           <div class="cv-save-actions">
             <button class="btn btn-sm" data-action="load-cv" data-id="${e.id}">Charger</button>
-            <button class="btn btn-sm" data-action="duplicate-cv" data-id="${e.id}" title="Dupliquer ce CV pour le modifier">Dupliquer</button>
             <button class="btn btn-sm" data-action="delete-cv" data-id="${e.id}">×</button>
           </div>
         </div>
@@ -1321,9 +1164,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     }).join('');
     wrap.querySelectorAll('[data-action="load-cv"]').forEach(btn => {
       btn.addEventListener('click', () => loadSavedCV(btn.dataset.id));
-    });
-    wrap.querySelectorAll('[data-action="duplicate-cv"]').forEach(btn => {
-      btn.addEventListener('click', () => duplicateSavedCV(btn.dataset.id));
     });
     wrap.querySelectorAll('[data-action="delete-cv"]').forEach(btn => {
       btn.addEventListener('click', () => deleteSavedCV(btn.dataset.id));
@@ -1345,17 +1185,10 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     data.languages = (data.languages || []).map(e => ({ ...e, id: e.id || newId() }));
     data.skills = data.skills || [];
     data.interests = data.interests || [];
-    data.customSections = (data.customSections || []).map(sec => ({
-      ...sec,
-      id: sec.id || newId(),
-      entries: (sec.entries || []).map(en => ({ ...en, id: en.id || newId() }))
-    }));
-    data.font = data.font || 'fraunces-inter';
     document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.template === data.template));
     document.getElementById('accentPicker').value = data.accent || '#1f6f63';
-    document.getElementById('fontSelect').value = data.font;
     renderExpList(); renderEduList(); renderLangList();
-    renderSkillTags(); renderInterestTags(); renderCustomSectionsList();
+    renderSkillTags(); renderInterestTags();
     renderCV();
   }
 
@@ -1365,7 +1198,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   renderLangList();
   renderSkillTags();
   renderInterestTags();
-  renderCustomSectionsList();
   renderCV();
   renderSavedCvList();
   if(!window.storage){

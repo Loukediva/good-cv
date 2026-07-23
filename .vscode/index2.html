@@ -183,7 +183,7 @@ button, input, textarea, select{ font-family:inherit; }
 }
 
 .tabs{
-  display:flex; gap:2px; width:100%; max-width:794px; flex-shrink:0;
+  display:flex; gap:2px; width:100%; max-width:794px;
 }
 .tab{
   font-family:'Inter', sans-serif; font-size:13px; font-weight:600;
@@ -209,8 +209,6 @@ button, input, textarea, select{ font-family:inherit; }
   font-family: var(--cv-body-font, 'Inter', sans-serif);
   border-radius: 0 4px 4px 4px;
   box-sizing: border-box;
-  flex-shrink: 0;
-  height: auto;
 }
 .cv-eyebrow{
   font-family:'IBM Plex Mono', monospace; font-size:10.5px; letter-spacing:0.1em;
@@ -259,8 +257,8 @@ button, input, textarea, select{ font-family:inherit; }
 /* ---- Template: Classique (default grid above) ---- */
 
 /* ---- Template: Moderne — colored sidebar ---- */
-.template-moderne{ padding:0; }
-.template-moderne .cv-body{ grid-template-columns: 240px 1fr; gap:0; border-radius: 0 4px 4px 4px; overflow:hidden; }
+.template-moderne{ padding:0; overflow:hidden; }
+.template-moderne .cv-body{ grid-template-columns: 240px 1fr; gap:0; }
 .template-moderne .cv-header{ display:none; }
 .template-moderne .cv-side{
   background: var(--accent); color:#fff; padding: 46px 26px; order:-1;
@@ -291,7 +289,6 @@ button, input, textarea, select{ font-family:inherit; }
 .footer-note{
   text-align:center; font-size:11px; color: var(--ink-muted); margin-top:18px;
   font-family:'IBM Plex Mono', monospace;
-  flex-shrink:0; width:100%;
 }
 
 /* ---------- Responsive ---------- */

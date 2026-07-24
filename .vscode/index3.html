@@ -183,16 +183,15 @@ button, input, textarea, select{ font-family:inherit; }
 }
 
 .tabs{
-  display:flex; flex-wrap:wrap; gap:2px; width:100%; max-width:794px; flex-shrink:0;
+  display:flex; gap:2px; width:100%; max-width:794px; flex-shrink:0;
 }
 .tab{
-  font-family:'Inter', sans-serif; font-size:12.5px; font-weight:600;
-  padding: 10px 16px 12px; border:none; cursor:pointer;
+  font-family:'Inter', sans-serif; font-size:13px; font-weight:600;
+  padding: 10px 22px 12px; border:none; cursor:pointer;
   border-radius: 10px 10px 0 0;
   background: #1a1e28; color: var(--ink-muted);
   transform: translateY(4px);
   transition: all .15s ease;
-  white-space: nowrap;
 }
 .tab.active{
   background: var(--paper); color: var(--text-dark);
@@ -288,43 +287,6 @@ button, input, textarea, select{ font-family:inherit; }
 .template-minimal .cv-side{ border-top: 1px solid var(--paper-line); padding-top:10px; margin-top:6px;}
 .template-minimal .skill-pill{ border-radius:0; border:none; border-bottom:1px solid var(--paper-line); padding-left:0; }
 
-/* ---- Template: Chronologique — frise verticale pour le parcours ---- */
-.template-chrono .cv-body{ grid-template-columns: 1fr; gap: 30px; }
-.template-chrono .cv-side{ border-top: 1px solid var(--paper-line); padding-top: 16px; margin-top: 4px; }
-.template-chrono .exp-item, .template-chrono .edu-item{
-  position:relative; padding-left: 26px; margin-bottom: 24px; border-left: 2px solid var(--paper-line);
-}
-.template-chrono .exp-item::before, .template-chrono .edu-item::before{
-  content:''; position:absolute; left:-6px; top:2px; width:11px; height:11px;
-  border-radius:50%; background: var(--accent); border:2px solid var(--paper);
-}
-.template-chrono .exp-item:last-child, .template-chrono .edu-item:last-child{ border-left-color: transparent; }
-.template-chrono .item-dates{ display:block; margin-bottom:2px; }
-.template-chrono .cv-name{ font-size:30px; }
-
-/* ---- Template: Audace — bandeau plein largeur, plus créatif ---- */
-.template-audace{ padding-top:0; }
-.template-audace .cv-header{
-  background: var(--accent); color:#fff;
-  margin: 0 -60px 34px; padding: 48px 60px 56px;
-  border-radius: 0 4px 0 0; position:relative; overflow:hidden;
-}
-.template-audace .cv-header::after{
-  content:''; position:absolute; right:-40px; bottom:-40px; width:160px; height:160px;
-  border-radius:50%; background: rgba(255,255,255,0.08);
-}
-.template-audace .cv-photo{ border:4px solid rgba(255,255,255,0.9); box-shadow: 0 6px 16px rgba(0,0,0,0.25); }
-.template-audace .cv-eyebrow{ color: rgba(255,255,255,0.75); }
-.template-audace .cv-name{ color:#fff; }
-.template-audace .cv-role{ color: rgba(255,255,255,0.92); }
-.template-audace .cv-contacts{ color: rgba(255,255,255,0.85); }
-.template-audace .cv-section h3{ position:relative; padding-left:16px; }
-.template-audace .cv-section h3::before{
-  content:''; position:absolute; left:0; top:3px; width:7px; height:7px; background: var(--accent); border-radius:2px;
-}
-.template-audace .skill-pill{ background: var(--accent); color:#fff; border:none; font-weight:600; }
-.template-audace .item-sub{ color: var(--accent); }
-
 /* ---------- Footer note ---------- */
 .footer-note{
   text-align:center; font-size:11px; color: var(--ink-muted); margin-top:18px;
@@ -403,16 +365,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
           <option value="student">Étudiant(e) / Stage</option>
         </select>
       </label>
-      <label class="color-swatch" title="Traduction automatique (service gratuit) du texte libre du CV, dans une copie séparée à relire. Qualité variable, surtout pour l'ewé.">Langue
-        <select id="translateLang" style="background:var(--ink-soft); color:var(--ink-text); border:1px solid var(--ink-line); border-radius:6px; padding:5px 8px; font-family:'Inter',sans-serif; font-size:12px;">
-          <option value="Anglais" selected>Anglais</option>
-          <option value="Espagnol">Espagnol</option>
-          <option value="Portugais">Portugais</option>
-          <option value="Allemand">Allemand</option>
-          <option value="Ewé">Ewé</option>
-        </select>
-      </label>
-      <button class="btn btn-ghost" id="translateBtn">Traduire</button>
       <button class="btn btn-ghost" id="clearAll">Effacer tout</button>
       <button class="btn btn-ghost" id="downloadJpeg">Exporter en JPEG</button>
       <button class="btn btn-accent" id="downloadPdf">Télécharger en PDF</button>
@@ -515,8 +467,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
         <button class="tab active" data-template="classique">Classique</button>
         <button class="tab" data-template="moderne">Moderne</button>
         <button class="tab" data-template="minimal">Minimal</button>
-        <button class="tab" data-template="chrono">Chronologique</button>
-        <button class="tab" data-template="audace">Audace</button>
       </div>
       <div class="cv-page template-classique" id="cvPage"></div>
       <p class="footer-note">Aperçu mis à jour en direct — cliquez sur « Télécharger en PDF » pour imprimer ou enregistrer.<br>Un outil <a href="https://loukediva.github.io/ekatech/index.html#services" style="color:var(--accent); text-decoration:none;">EKA Tech</a>.</p>
@@ -830,90 +780,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
       btn.textContent = originalText;
       btn.disabled = false;
     });
-  });
-
-  // ---------- Translate CV content ----------
-  const TRANSLATE_LANG_CODES = { 'Anglais':'en', 'Espagnol':'es', 'Portugais':'pt', 'Allemand':'de', 'Ewé':'ee' };
-
-  async function translateText(text, targetCode){
-    if(!text || !text.trim()) return text;
-    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=fr|${targetCode}`;
-    const res = await fetch(url);
-    const json = await res.json();
-    if(json && json.responseData && json.responseData.translatedText){
-      return json.responseData.translatedText;
-    }
-    throw new Error('Translation failed');
-  }
-
-  document.getElementById('translateBtn').addEventListener('click', async () => {
-    const btn = document.getElementById('translateBtn');
-    const targetLabel = document.getElementById('translateLang').value;
-    const targetCode = TRANSLATE_LANG_CODES[targetLabel] || 'en';
-    const originalText = btn.textContent;
-    btn.textContent = 'Traduction...';
-    btn.disabled = true;
-
-    try {
-      const jobs = [];
-      const addJob = (getter, setter) => {
-        const val = getter();
-        if (val && val.trim()) jobs.push({ text: val, setter });
-      };
-
-      addJob(() => data.title, (t) => { data.title = t; });
-      addJob(() => data.summary, (t) => { data.summary = t; });
-      data.experiences.forEach(e => {
-        addJob(() => e.role, (t) => { e.role = t; });
-        addJob(() => e.description, (t) => { e.description = t; });
-      });
-      data.education.forEach(e => {
-        addJob(() => e.degree, (t) => { e.degree = t; });
-        addJob(() => e.description, (t) => { e.description = t; });
-      });
-      data.skills.forEach((s, i) => addJob(() => data.skills[i], (t) => { data.skills[i] = t; }));
-      data.interests.forEach((s, i) => addJob(() => data.interests[i], (t) => { data.interests[i] = t; }));
-      data.customSections.forEach(sec => {
-        addJob(() => sec.title, (t) => { sec.title = t; });
-        sec.entries.forEach(en => {
-          addJob(() => en.heading, (t) => { en.heading = t; });
-          addJob(() => en.subheading, (t) => { en.subheading = t; });
-          addJob(() => en.description, (t) => { en.description = t; });
-        });
-      });
-
-      if (!jobs.length) {
-        alert('Rien à traduire pour le moment : remplissez au moins le titre ou le résumé.');
-        return;
-      }
-
-      let failures = 0;
-      for (const job of jobs) {
-        try {
-          job.setter(await translateText(job.text, targetCode));
-        } catch (err) {
-          failures++;
-        }
-        await new Promise(r => setTimeout(r, 150));
-      }
-
-      currentCvId = null;
-      const nameInput = document.getElementById('cvNameInput');
-      nameInput.value = (data.name ? data.name + ' — ' : '') + 'CV (' + targetLabel + ')';
-      fillFormFromData();
-
-      if (failures > 0) {
-        alert(`Traduction appliquée dans une copie de travail, mais ${failures} élément(s) n'ont pas pu être traduits. Relisez, corrigez si besoin, puis enregistrez.`);
-      } else {
-        alert('Traduction appliquée dans une copie de travail. Relisez le résultat, puis cliquez sur « Enregistrer ce CV » si vous voulez le garder.');
-      }
-    } catch (e) {
-      console.error(e);
-      alert("La traduction a échoué. Vérifiez votre connexion et réessayez.");
-    } finally {
-      btn.textContent = originalText;
-      btn.disabled = false;
-    }
   });
 
   // ---------- Experiences ----------

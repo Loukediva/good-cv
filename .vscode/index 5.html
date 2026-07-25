@@ -161,18 +161,6 @@ button, input, textarea, select{ font-family:inherit; }
 .tag button:hover{ color: var(--warn); }
 .hint{ font-size:11px; color: var(--ink-muted); margin-top:4px; }
 
-.order-item{
-  display:flex; align-items:center; gap:10px; padding: 9px 12px;
-  background: var(--ink-soft); border:1px solid var(--ink-line); border-radius:7px;
-  margin-bottom:6px; cursor:grab; font-size:13px; color: var(--ink-text);
-  transition: border-color .15s ease, opacity .15s ease;
-}
-.order-item:active{ cursor:grabbing; }
-.order-item.dragging{ opacity:0.4; }
-.order-item.drag-over{ border-color: var(--accent); }
-.order-item .drag-handle{ color: var(--ink-muted); font-size:14px; line-height:1; user-select:none; }
-
-
 .cv-save-row{
   display:flex; flex-direction:column; gap:8px; padding: 10px 12px;
   background: var(--ink-soft); border:1px solid var(--ink-line); border-radius:7px;
@@ -415,27 +403,12 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
           <option value="student">Étudiant(e) / Stage</option>
         </select>
       </label>
-      <label class="color-swatch" title="Traduction automatique (service gratuit) du texte libre du CV, dans une copie séparée à relire. Qualité variable pour les langues moins courantes.">De
-        <select id="translateSourceLang" style="background:var(--ink-soft); color:var(--ink-text); border:1px solid var(--ink-line); border-radius:6px; padding:5px 8px; font-family:'Inter',sans-serif; font-size:12px;">
-          <option value="Français" selected>Français</option>
-          <option value="Anglais">Anglais</option>
-          <option value="Espagnol">Espagnol</option>
-          <option value="Portugais">Portugais</option>
-          <option value="Allemand">Allemand</option>
-          <option value="Italien">Italien</option>
-          <option value="Arabe">Arabe</option>
-          <option value="Ewé">Ewé</option>
-        </select>
-      </label>
-      <label class="color-swatch">Vers
+      <label class="color-swatch" title="Traduction automatique (service gratuit) du texte libre du CV, dans une copie séparée à relire. Qualité variable, surtout pour l'ewé.">Langue
         <select id="translateLang" style="background:var(--ink-soft); color:var(--ink-text); border:1px solid var(--ink-line); border-radius:6px; padding:5px 8px; font-family:'Inter',sans-serif; font-size:12px;">
-          <option value="Français">Français</option>
           <option value="Anglais" selected>Anglais</option>
           <option value="Espagnol">Espagnol</option>
           <option value="Portugais">Portugais</option>
           <option value="Allemand">Allemand</option>
-          <option value="Italien">Italien</option>
-          <option value="Arabe">Arabe</option>
           <option value="Ewé">Ewé</option>
         </select>
       </label>
@@ -534,33 +507,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
         </div>
       </div>
 
-      <div class="desk-section">
-        <p class="desk-title">Réorganiser les sections</p>
-        <p class="hint" style="margin-bottom:10px;">Glissez-déposez pour changer l'ordre d'affichage dans le CV.</p>
-        <p class="hint" style="margin:0 0 6px; font-weight:600; color:var(--ink-text);">Colonne principale</p>
-        <div id="mainOrderList" class="order-list"></div>
-        <p class="hint" style="margin:14px 0 6px; font-weight:600; color:var(--ink-text);">Colonne latérale</p>
-        <div id="sideOrderList" class="order-list"></div>
-      </div>
-
-      <div class="desk-section">
-        <p class="desk-title">Lettre de motivation</p>
-        <p class="hint" style="margin-bottom:10px;">Génère un premier brouillon à partir de votre CV, à relire et personnaliser. Ce n'est pas une génération par IA (voir note plus bas) mais un modèle rempli automatiquement.</p>
-        <div class="field-row">
-          <div class="field"><label>Poste visé</label><input type="text" id="letterPosition" placeholder="Ex : Cheffe de projet digital"></div>
-        </div>
-        <div class="field"><label>Entreprise (optionnel)</label><input type="text" id="letterCompany" placeholder="Ex : EKA Tech"></div>
-        <div class="field"><label>Offre d'emploi (optionnel, pour contexte)</label><textarea id="letterJobOffer" placeholder="Collez ici l'annonce, si vous en avez une (facultatif)"></textarea></div>
-        <button class="add-btn" id="generateLetterBtn" style="margin-bottom:10px;">Générer la lettre</button>
-        <div id="letterOutputWrap" style="display:none;">
-          <div class="field"><label>Résultat (modifiable)</label><textarea id="coverLetterOutput" style="min-height:260px;"></textarea></div>
-          <div style="display:flex; gap:8px; flex-wrap:wrap;">
-            <button class="btn btn-sm" id="copyLetterBtn">Copier le texte</button>
-            <button class="btn btn-sm btn-accent" id="downloadLetterDocBtn">Télécharger en .doc</button>
-          </div>
-        </div>
-      </div>
-
     </section>
 
     <!-- ============ PREVIEW ============ -->
@@ -594,14 +540,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     customSections: [],
     template: 'classique',
     accent: '#1f6f63',
-    font: 'fraunces-inter',
-    mainOrder: ['summary', 'experience', 'education'],
-    sideOrder: ['skills', 'languages', 'interests']
-  };
-
-  const SECTION_LABELS = {
-    summary: 'Profil', experience: 'Expérience', education: 'Formation',
-    skills: 'Compétences', languages: 'Langues', interests: "Centres d'intérêt"
+    font: 'fraunces-inter'
   };
 
   const FONT_PRESETS = {
@@ -673,24 +612,27 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     return `<p class="interest-line">${data.interests.map(esc).join(' &nbsp;·&nbsp; ')}</p>`;
   }
 
-  function renderCustomSectionBlock(sec){
-    const entriesHtml = sec.entries.length ? sec.entries.map(en => `
-      <div class="exp-item">
-        <div class="item-top">
-          <div>
-            <div class="item-title">${esc(en.heading) || 'Titre'}</div>
-            ${en.subheading ? `<div class="item-sub">${esc(en.subheading)}</div>` : ''}
+  function renderCustomSectionsPreview(){
+    if(!data.customSections.length) return '';
+    return data.customSections.map(sec => {
+      const entriesHtml = sec.entries.length ? sec.entries.map(en => `
+        <div class="exp-item">
+          <div class="item-top">
+            <div>
+              <div class="item-title">${esc(en.heading) || 'Titre'}</div>
+              ${en.subheading ? `<div class="item-sub">${esc(en.subheading)}</div>` : ''}
+            </div>
           </div>
+          ${en.description ? `<div class="item-desc">${nl2br(en.description)}</div>` : ''}
         </div>
-        ${en.description ? `<div class="item-desc">${nl2br(en.description)}</div>` : ''}
-      </div>
-    `).join('') : '<p class="empty-note">Aucun élément ajouté.</p>';
-    return `
-      <div class="cv-section">
-        <h3>${esc(sec.title) || 'Rubrique'}</h3>
-        ${entriesHtml}
-      </div>
-    `;
+      `).join('') : '<p class="empty-note">Aucun élément ajouté.</p>';
+      return `
+        <div class="cv-section">
+          <h3>${esc(sec.title) || 'Rubrique'}</h3>
+          ${entriesHtml}
+        </div>
+      `;
+    }).join('');
   }
 
   function renderCV(){
@@ -702,46 +644,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     page.style.setProperty('--cv-body-font', preset.body);
 
     const photoHtml = data.photo ? `style="background-image:url('${data.photo}')"` : '';
-
-    const mainBlocks = {
-      summary: `
-        <div class="cv-section cv-summary">
-          <h3>Profil</h3>
-          <p>${data.summary ? nl2br(data.summary) : '<span class="empty-note">Ajoutez un court résumé de votre profil.</span>'}</p>
-        </div>`,
-      experience: `
-        <div class="cv-section cv-experience">
-          <h3>Expérience</h3>
-          ${renderExperiences()}
-        </div>`,
-      education: `
-        <div class="cv-section cv-education">
-          <h3>Formation</h3>
-          ${renderEducation()}
-        </div>`
-    };
-    data.customSections.forEach(sec => { mainBlocks[sec.id] = renderCustomSectionBlock(sec); });
-
-    const sideBlocks = {
-      skills: `
-        <div class="cv-section cv-skills">
-          <h3>Compétences</h3>
-          ${renderSkills()}
-        </div>`,
-      languages: `
-        <div class="cv-section cv-languages">
-          <h3>Langues</h3>
-          ${renderLanguages()}
-        </div>`,
-      interests: `
-        <div class="cv-section cv-interests">
-          <h3>Centres d'intérêt</h3>
-          ${renderInterests()}
-        </div>`
-    };
-
-    const mainHtml = data.mainOrder.filter(k => mainBlocks[k]).map(k => mainBlocks[k]).join('');
-    const sideHtml = data.sideOrder.filter(k => sideBlocks[k]).map(k => sideBlocks[k]).join('');
 
     page.innerHTML = `
       <div class="cv-header">
@@ -755,7 +657,19 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
       </div>
       <div class="cv-body">
         <div class="cv-main">
-          ${mainHtml}
+          <div class="cv-section cv-summary">
+            <h3>Profil</h3>
+            <p>${data.summary ? nl2br(data.summary) : '<span class="empty-note">Ajoutez un court résumé de votre profil.</span>'}</p>
+          </div>
+          <div class="cv-section cv-experience">
+            <h3>Expérience</h3>
+            ${renderExperiences()}
+          </div>
+          <div class="cv-section cv-education">
+            <h3>Formation</h3>
+            ${renderEducation()}
+          </div>
+          ${renderCustomSectionsPreview()}
         </div>
         <aside class="cv-side">
           <div class="photo-slot" style="display:none"></div>
@@ -764,7 +678,18 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
           <div class="side-contacts">
             ${[data.email, data.phone, data.location, data.link].filter(Boolean).map(esc).join('<br>')}
           </div>
-          ${sideHtml}
+          <div class="cv-section cv-skills">
+            <h3>Compétences</h3>
+            ${renderSkills()}
+          </div>
+          <div class="cv-section cv-languages">
+            <h3>Langues</h3>
+            ${renderLanguages()}
+          </div>
+          <div class="cv-section cv-interests">
+            <h3>Centres d'intérêt</h3>
+            ${renderInterests()}
+          </div>
         </aside>
       </div>
     `;
@@ -908,12 +833,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   });
 
   // ---------- Translate CV content ----------
-  const TRANSLATE_LANG_CODES = { 'Français':'fr', 'Anglais':'en', 'Espagnol':'es', 'Portugais':'pt', 'Allemand':'de', 'Italien':'it', 'Arabe':'ar', 'Ewé':'ee' };
+  const TRANSLATE_LANG_CODES = { 'Anglais':'en', 'Espagnol':'es', 'Portugais':'pt', 'Allemand':'de', 'Ewé':'ee' };
 
-  async function translateText(text, sourceCode, targetCode){
+  async function translateText(text, targetCode){
     if(!text || !text.trim()) return text;
-    if(sourceCode === targetCode) return text;
-    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=${sourceCode}|${targetCode}`;
+    const url = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=fr|${targetCode}`;
     const res = await fetch(url);
     const json = await res.json();
     if(json && json.responseData && json.responseData.translatedText){
@@ -924,14 +848,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
   document.getElementById('translateBtn').addEventListener('click', async () => {
     const btn = document.getElementById('translateBtn');
-    const sourceLabel = document.getElementById('translateSourceLang').value;
     const targetLabel = document.getElementById('translateLang').value;
-    const sourceCode = TRANSLATE_LANG_CODES[sourceLabel] || 'fr';
     const targetCode = TRANSLATE_LANG_CODES[targetLabel] || 'en';
-    if(sourceCode === targetCode){
-      alert('Choisissez deux langues différentes.');
-      return;
-    }
     const originalText = btn.textContent;
     btn.textContent = 'Traduction...';
     btn.disabled = true;
@@ -972,7 +890,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
       let failures = 0;
       for (const job of jobs) {
         try {
-          job.setter(await translateText(job.text, sourceCode, targetCode));
+          job.setter(await translateText(job.text, targetCode));
         } catch (err) {
           failures++;
         }
@@ -1296,11 +1214,8 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 
   // ---------- Custom sections (Projets, Références, etc.) ----------
   function addCustomSection(title){
-    const sec = { id: newId(), title: title, entries: [] };
-    data.customSections.push(sec);
-    data.mainOrder.push(sec.id);
+    data.customSections.push({ id: newId(), title: title, entries: [] });
     renderCustomSectionsList();
-    renderSectionOrderLists();
     renderCV();
   }
 
@@ -1347,15 +1262,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
       const sec = data.customSections.find(s => s.id === card.dataset.secId);
       const titleInput = card.querySelector('[data-field="title"]');
       if(titleInput){
-        titleInput.addEventListener('input', () => { sec.title = titleInput.value; renderSectionOrderLists(); renderCV(); });
+        titleInput.addEventListener('input', () => { sec.title = titleInput.value; renderCV(); });
       }
     });
     wrap.querySelectorAll('[data-action="remove-section"]').forEach(btn => {
       btn.addEventListener('click', () => {
         if(!confirm('Supprimer cette rubrique et son contenu ?')) return;
         data.customSections = data.customSections.filter(s => s.id !== btn.dataset.id);
-        data.mainOrder = data.mainOrder.filter(k => k !== btn.dataset.id);
-        renderCustomSectionsList(); renderSectionOrderLists(); renderCV();
+        renderCustomSectionsList(); renderCV();
       });
     });
     wrap.querySelectorAll('[data-action="add-entry"]').forEach(btn => {
@@ -1374,169 +1288,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     });
   }
 
-  // ---------- Section reordering (drag & drop) ----------
-  function sectionLabel(key){
-    if(SECTION_LABELS[key]) return SECTION_LABELS[key];
-    const sec = data.customSections.find(s => s.id === key);
-    return sec ? (sec.title || 'Rubrique') : key;
-  }
-
-  function renderOrderList(containerId, orderArray){
-    const container = document.getElementById(containerId);
-    container.innerHTML = orderArray.map(key => `
-      <div class="order-item" draggable="true" data-key="${key}">
-        <span class="drag-handle">⠿</span> ${esc(sectionLabel(key))}
-      </div>
-    `).join('');
-
-    let draggedKey = null;
-    container.querySelectorAll('.order-item').forEach(item => {
-      item.addEventListener('dragstart', () => {
-        draggedKey = item.dataset.key;
-        item.classList.add('dragging');
-      });
-      item.addEventListener('dragend', () => {
-        item.classList.remove('dragging');
-        container.querySelectorAll('.order-item').forEach(el => el.classList.remove('drag-over'));
-      });
-      item.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        if(item.dataset.key !== draggedKey) item.classList.add('drag-over');
-      });
-      item.addEventListener('dragleave', () => item.classList.remove('drag-over'));
-      item.addEventListener('drop', (e) => {
-        e.preventDefault();
-        item.classList.remove('drag-over');
-        const targetKey = item.dataset.key;
-        if(!draggedKey || draggedKey === targetKey) return;
-        const arr = orderArray;
-        const fromIdx = arr.indexOf(draggedKey);
-        const toIdx = arr.indexOf(targetKey);
-        if(fromIdx === -1 || toIdx === -1) return;
-        arr.splice(fromIdx, 1);
-        arr.splice(toIdx, 0, draggedKey);
-        renderOrderList(containerId, arr);
-        renderCV();
-      });
-    });
-  }
-
-  function renderSectionOrderLists(){
-    renderOrderList('mainOrderList', data.mainOrder);
-    renderOrderList('sideOrderList', data.sideOrder);
-  }
-
-  // ---------- Cover letter (template-based, works fully offline/once deployed) ----------
-  function extractYear(str){
-    const m = (str || '').match(/(19|20)\d{2}/);
-    return m ? parseInt(m[0], 10) : null;
-  }
-
-  function computeExperienceYears(){
-    const years = data.experiences.map(e => extractYear(e.start)).filter(Boolean);
-    if (!years.length) return null;
-    const diff = new Date().getFullYear() - Math.min(...years);
-    return diff > 0 ? diff : null;
-  }
-
-  function todayFR(){
-    const months = ['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'];
-    const d = new Date();
-    return `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
-  }
-
-  function buildCoverLetter(){
-    const position = document.getElementById('letterPosition').value.trim() || data.title || 'ce poste';
-    const company = document.getElementById('letterCompany').value.trim();
-    const name = data.name || 'Votre nom';
-    const location = data.location || '';
-    const years = computeExperienceYears();
-    const topSkills = data.skills.slice(0, 3).join(', ');
-    const lastExp = data.experiences[0];
-
-    let intro = `Actuellement ${data.title ? data.title.toLowerCase() : 'professionnel(le)'}`;
-    if (years) intro += ` fort(e) de ${years} ans d'expérience`;
-    intro += `, je vous adresse ma candidature pour le poste de ${position}`;
-    if (company) intro += ` au sein de ${company}`;
-    intro += '.';
-
-    const body2 = data.summary ? data.summary.trim() : '';
-
-    let body3 = '';
-    if (lastExp && (lastExp.role || lastExp.company)) {
-      body3 = `Au cours de mon parcours, notamment en tant que ${lastExp.role || 'poste précédent'}${lastExp.company ? ' chez ' + lastExp.company : ''}, j'ai développé des compétences`;
-      if (topSkills) body3 += ` en ${topSkills}`;
-      body3 += ` que je suis convaincu(e) de pouvoir mettre à profit au sein de votre équipe.`;
-    } else if (topSkills) {
-      body3 = `Je possède des compétences solides en ${topSkills}, que je suis convaincu(e) de pouvoir mettre à profit au sein de votre équipe.`;
-    }
-
-    const closing = `Je serais ravi(e) de vous rencontrer pour échanger plus en détail sur ma candidature et sur la façon dont je pourrais contribuer à vos projets.\n\nDans l'attente de votre retour, je vous prie d'agréer, Madame, Monsieur, l'expression de mes salutations distinguées.`;
-
-    const parts = [
-      `${location ? location + ', ' : ''}le ${todayFR()}`,
-      '',
-      `Objet : Candidature au poste de ${position}${company ? ' — ' + company : ''}`,
-      '',
-      'Madame, Monsieur,',
-      '',
-      intro,
-      ''
-    ];
-    if (body2) { parts.push(body2); parts.push(''); }
-    if (body3) { parts.push(body3); parts.push(''); }
-    parts.push(closing);
-    parts.push('');
-    parts.push(name);
-
-    return parts.join('\n');
-  }
-
-  document.getElementById('generateLetterBtn').addEventListener('click', () => {
-    const text = buildCoverLetter();
-    document.getElementById('coverLetterOutput').value = text;
-    document.getElementById('letterOutputWrap').style.display = 'block';
-  });
-
-  document.getElementById('copyLetterBtn').addEventListener('click', async () => {
-    const text = document.getElementById('coverLetterOutput').value;
-    const btn = document.getElementById('copyLetterBtn');
-    const original = btn.textContent;
-    try {
-      await navigator.clipboard.writeText(text);
-      btn.textContent = 'Copié ✓';
-      setTimeout(() => { btn.textContent = original; }, 1800);
-    } catch (e) {
-      alert('Impossible de copier automatiquement. Sélectionnez le texte manuellement dans la zone.');
-    }
-  });
-
-  document.getElementById('downloadLetterDocBtn').addEventListener('click', () => {
-    const text = document.getElementById('coverLetterOutput').value;
-    const escHtml = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-    const bodyHtml = text.split('\n').map(line => line.trim() === '' ? '<p>&nbsp;</p>' : `<p>${escHtml(line)}</p>`).join('');
-    const docHtml = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-      <head><meta charset='utf-8'><title>Lettre de motivation</title>
-      <style>body{font-family:Calibri,Arial,sans-serif; font-size:12pt; line-height:1.5;}</style>
-      </head>
-      <body>${bodyHtml}</body></html>`;
-    const blob = new Blob(['\ufeff', docHtml], { type: 'application/msword' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    const fileName = (data.name ? data.name.trim().replace(/\s+/g, '-') : 'lettre') + '-lettre-motivation.doc';
-    a.href = url;
-    a.download = fileName;
-    a.click();
-    URL.revokeObjectURL(url);
-  });
-
   // ---------- Reset current CV (used by "Effacer tout" and "Nouveau CV") ----------
   function resetCurrentCV(){
     Object.assign(data, {
       name:'', title:'', email:'', phone:'', location:'', link:'', photo:'', summary:'',
-      experiences: [], education: [], skills: [], languages: [], interests: [], customSections: [],
-      mainOrder: ['summary', 'experience', 'education'],
-      sideOrder: ['skills', 'languages', 'interests']
+      experiences: [], education: [], skills: [], languages: [], interests: [], customSections: []
     });
     currentCvId = null;
     document.querySelectorAll('.desk input[type=text], .desk input[type=email], .desk input[type=tel], .desk textarea').forEach(el => el.value = '');
@@ -1544,7 +1300,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     document.getElementById('photoPreview').textContent = 'Photo';
     renderExpList(); renderEduList(); renderLangList();
     renderSkillTags(); renderInterestTags(); renderCustomSectionsList();
-    renderSectionOrderLists();
     renderCV();
     renderSavedCvList();
   }
@@ -1733,28 +1488,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
       entries: (sec.entries || []).map(en => ({ ...en, id: en.id || newId() }))
     }));
     data.font = data.font || 'fraunces-inter';
-
-    // Ensure order arrays exist, contain all valid keys, and drop stale ones (backward compatibility)
-    const defaultMain = ['summary', 'experience', 'education'];
-    const defaultSide = ['skills', 'languages', 'interests'];
-    const customIds = data.customSections.map(s => s.id);
-    let mainOrder = Array.isArray(data.mainOrder) ? data.mainOrder.slice() : defaultMain.slice();
-    mainOrder = mainOrder.filter(k => defaultMain.includes(k) || customIds.includes(k));
-    defaultMain.forEach(k => { if (!mainOrder.includes(k)) mainOrder.push(k); });
-    customIds.forEach(id => { if (!mainOrder.includes(id)) mainOrder.push(id); });
-    data.mainOrder = mainOrder;
-
-    let sideOrder = Array.isArray(data.sideOrder) ? data.sideOrder.slice() : defaultSide.slice();
-    sideOrder = sideOrder.filter(k => defaultSide.includes(k));
-    defaultSide.forEach(k => { if (!sideOrder.includes(k)) sideOrder.push(k); });
-    data.sideOrder = sideOrder;
-
     document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.template === data.template));
     document.getElementById('accentPicker').value = data.accent || '#1f6f63';
     document.getElementById('fontSelect').value = data.font;
     renderExpList(); renderEduList(); renderLangList();
     renderSkillTags(); renderInterestTags(); renderCustomSectionsList();
-    renderSectionOrderLists();
     renderCV();
   }
 
@@ -1765,7 +1503,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   renderSkillTags();
   renderInterestTags();
   renderCustomSectionsList();
-  renderSectionOrderLists();
   renderCV();
   renderSavedCvList();
   if(!window.storage){

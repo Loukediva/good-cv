@@ -1,0 +1,18 @@
+# Se placer dans le dépôt
+cd chemin/vers/ekatech
+
+# Vérifier qu'on est bien synchronisé avec la dernière version
+git pull
+
+# Copier vos fichiers mis à jour dans le dépôt (remplacez les chemins par les vôtres)
+copy C:\chemin\vers\good-cv.html .
+copy C:\chemin\vers\index.html .
+
+# Ajouter les changements
+git add good-cv.html index.html
+
+# Créer le commit
+git commit -m "Ajout polices, rubriques personnalisées, correction responsive"
+
+# Envoyer sur GitHub
+git push

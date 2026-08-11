@@ -300,33 +300,19 @@ button, input, textarea, select{ font-family:inherit; }
 .template-minimal .cv-side{ border-top: 1px solid var(--paper-line); padding-top:10px; margin-top:6px;}
 .template-minimal .skill-pill{ border-radius:0; border:none; border-bottom:1px solid var(--paper-line); padding-left:0; }
 
-/* ---- Template: Officiel — CV administratif classique ---- */
-.template-chrono{
-  border: 2px solid #000; padding: 40px 46px; box-sizing: border-box;
+/* ---- Template: Chronologique — frise verticale pour le parcours ---- */
+.template-chrono .cv-body{ grid-template-columns: 1fr; gap: 30px; }
+.template-chrono .cv-side{ border-top: 1px solid var(--paper-line); padding-top: 16px; margin-top: 4px; }
+.template-chrono .exp-item, .template-chrono .edu-item{
+  position:relative; padding-left: 26px; margin-bottom: 24px; border-left: 2px solid var(--paper-line);
 }
-.template-chrono .cv-header{ display:none; }
-.officiel-title{
-  text-align:center; font-weight:700; letter-spacing:0.45em; font-size:15px;
-  margin: 0 0 26px; text-transform:uppercase; color:#000;
+.template-chrono .exp-item::before, .template-chrono .edu-item::before{
+  content:''; position:absolute; left:-6px; top:2px; width:11px; height:11px;
+  border-radius:50%; background: var(--accent); border:2px solid var(--paper);
 }
-.officiel-info{ margin-bottom: 24px; }
-.officiel-info-row{ display:flex; gap:8px; font-size:13.5px; margin-bottom:5px; color:#000; }
-.officiel-info-label{ font-weight:700; width:180px; flex-shrink:0; }
-.officiel-info-value{ overflow-wrap:break-word; }
-.template-chrono .cv-body{ display:block; }
-.template-chrono .cv-main, .template-chrono .cv-side{ display:block; }
-.template-chrono .cv-section{ margin-bottom: 18px; }
-.template-chrono .cv-section h3{
-  font-family: var(--cv-body-font, 'Inter', sans-serif); font-weight:700; font-size:13.5px;
-  text-transform:uppercase; letter-spacing:0; text-decoration:underline;
-  border-bottom:none; padding-bottom:0; margin-bottom:8px; color:#000;
-}
-.officiel-list{ margin:0; padding-left: 20px; color:#000; }
-.officiel-list li{ font-size:13.5px; line-height:1.5; margin-bottom:8px; }
-.officiel-list li:last-child{ margin-bottom:0; }
-.officiel-sublist{ margin: 4px 0 0; padding-left: 20px; list-style: disc; }
-.officiel-sublist li{ margin-bottom:2px; }
-.template-chrono .cv-summary p{ color:#000; }
+.template-chrono .exp-item:last-child, .template-chrono .edu-item:last-child{ border-left-color: transparent; }
+.template-chrono .item-dates{ display:block; margin-bottom:2px; }
+.template-chrono .cv-name{ font-size:30px; }
 
 /* ---- Template: Audace — bandeau plein largeur, plus créatif ---- */
 .template-audace{ padding-top:0; }
@@ -497,7 +483,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
           <div class="field"><label>Ville</label><input type="text" id="f-location" placeholder="Lyon, France"></div>
           <div class="field"><label>Site / LinkedIn</label><input type="text" id="f-link" placeholder="linkedin.com/in/claire"></div>
         </div>
-        <div class="field"><label>Date de naissance (optionnel)</label><input type="text" id="f-birthdate" placeholder="Ex : 1er Mars 1998"></div>
       </div>
 
       <div class="desk-section">
@@ -584,7 +569,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
         <button class="tab active" data-template="classique">Classique</button>
         <button class="tab" data-template="moderne">Moderne</button>
         <button class="tab" data-template="minimal">Minimal</button>
-        <button class="tab" data-template="chrono">Officiel</button>
+        <button class="tab" data-template="chrono">Chronologique</button>
         <button class="tab" data-template="audace">Audace</button>
       </div>
       <div class="cv-page template-classique" id="cvPage"></div>
@@ -599,7 +584,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
 (function(){
   let uid = 1;
   const data = {
-    name:'', title:'', email:'', phone:'', location:'', link:'', birthdate:'',
+    name:'', title:'', email:'', phone:'', location:'', link:'',
     photo:'', summary:'',
     experiences: [],
     education: [],
@@ -708,99 +693,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     `;
   }
 
-  function joinWithEt(arr){
-    const list = arr.filter(Boolean);
-    if(!list.length) return '';
-    if(list.length === 1) return list[0];
-    return list.slice(0, -1).join(', ') + ' et ' + list[list.length - 1];
-  }
-
-  function renderOfficielExperiences(){
-    if(!data.experiences.length) return '<p class="empty-note">Aucune expérience ajoutée.</p>';
-    return '<ul class="officiel-list">' + data.experiences.map(e => {
-      const dates = [e.start, e.current ? 'Présent' : e.end].filter(Boolean).join(' – ');
-      const head = [e.role, e.company].filter(Boolean).join(' au ');
-      const subLines = (e.description || '').split('\n').map(l => l.trim()).filter(Boolean);
-      const sub = subLines.length ? '<ul class="officiel-sublist">' + subLines.map(l => `<li>${esc(l)}</li>`).join('') + '</ul>' : '';
-      return `<li>${dates ? `<strong>${esc(dates)}</strong> : ` : ''}${esc(head) || 'Poste'}.${sub}</li>`;
-    }).join('') + '</ul>';
-  }
-
-  function renderOfficielEducation(){
-    if(!data.education.length) return '<p class="empty-note">Aucune formation ajoutée.</p>';
-    return '<ul class="officiel-list">' + data.education.map(e => {
-      const dates = [e.start, e.end].filter(Boolean).join(' – ');
-      const head = [e.degree, e.school].filter(Boolean).join(', ');
-      const subLines = (e.description || '').split('\n').map(l => l.trim()).filter(Boolean);
-      const sub = subLines.length ? '<ul class="officiel-sublist">' + subLines.map(l => `<li>${esc(l)}</li>`).join('') + '</ul>' : '';
-      return `<li>${dates ? `<strong>${esc(dates)}</strong> : ` : ''}${esc(head) || 'Formation'}.${sub}</li>`;
-    }).join('') + '</ul>';
-  }
-
-  function renderOfficielSkills(){
-    if(!data.skills.length) return '<p class="empty-note">Aucune compétence ajoutée.</p>';
-    return '<ul class="officiel-list">' + data.skills.map(s => `<li>${esc(s)}</li>`).join('') + '</ul>';
-  }
-
-  function renderOfficielLanguages(){
-    if(!data.languages.length) return '<p class="empty-note">Aucune langue ajoutée.</p>';
-    const names = joinWithEt(data.languages.map(l => l.name).filter(Boolean));
-    return `<p style="margin:0; font-size:13.5px; color:#000;">Parlée et écrite : ${esc(names)}.</p>`;
-  }
-
-  function renderOfficielInterests(){
-    if(!data.interests.length) return '<p class="empty-note">Aucun centre d’intérêt ajouté.</p>';
-    return `<p style="margin:0; font-size:13.5px; color:#000;">${data.interests.map(esc).join(', ')}.</p>`;
-  }
-
-  function renderOfficielCustomSection(sec){
-    const entries = sec.entries.length ? '<ul class="officiel-list">' + sec.entries.map(en => {
-      const head = [en.heading, en.subheading].filter(Boolean).join(' — ');
-      const subLines = (en.description || '').split('\n').map(l => l.trim()).filter(Boolean);
-      const sub = subLines.length ? '<ul class="officiel-sublist">' + subLines.map(l => `<li>${esc(l)}</li>`).join('') + '</ul>' : '';
-      return `<li>${esc(head) || 'Élément'}.${sub}</li>`;
-    }).join('') + '</ul>' : '<p class="empty-note">Aucun élément ajouté.</p>';
-    return `<div class="cv-section"><h3>${esc(sec.title) || 'Rubrique'}</h3>${entries}</div>`;
-  }
-
-  function renderOfficielCV(page){
-    const infoRows = [
-      ['Nom', data.name],
-      ['Date de naissance', data.birthdate],
-      ['Profession', data.title],
-      ['Tél', data.phone],
-      ['Adresse e-mail', data.email],
-      ['Ville', data.location],
-      ['Site / LinkedIn', data.link]
-    ].filter(([, v]) => v && v.trim());
-
-    const infoHtml = infoRows.map(([label, value]) => `
-      <div class="officiel-info-row">
-        <span class="officiel-info-label">${esc(label.toUpperCase())}</span>
-        <span>: ${esc(value)}</span>
-      </div>
-    `).join('');
-
-    const blocks = {
-      summary: data.summary ? `<div class="cv-section cv-summary"><h3>Profil</h3><p>${nl2br(data.summary)}</p></div>` : '',
-      experience: `<div class="cv-section"><h3>Expériences professionnelles</h3>${renderOfficielExperiences()}</div>`,
-      education: `<div class="cv-section"><h3>Formation</h3>${renderOfficielEducation()}</div>`,
-      skills: `<div class="cv-section"><h3>Domaine de compétences</h3>${renderOfficielSkills()}</div>`,
-      languages: `<div class="cv-section"><h3>Connaissances linguistiques</h3>${renderOfficielLanguages()}</div>`,
-      interests: data.interests.length ? `<div class="cv-section"><h3>Centres d'intérêt</h3>${renderOfficielInterests()}</div>` : ''
-    };
-    data.customSections.forEach(sec => { blocks[sec.id] = renderOfficielCustomSection(sec); });
-
-    const order = [...data.mainOrder, ...data.sideOrder];
-    const bodyHtml = order.filter(k => blocks[k]).map(k => blocks[k]).join('');
-
-    page.innerHTML = `
-      <p class="officiel-title">Curriculum Vitae</p>
-      <div class="officiel-info">${infoHtml}</div>
-      ${bodyHtml}
-    `;
-  }
-
   function renderCV(){
     const page = document.getElementById('cvPage');
     page.className = 'cv-page template-' + data.template;
@@ -808,11 +700,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     const preset = FONT_PRESETS[data.font] || FONT_PRESETS['fraunces-inter'];
     page.style.setProperty('--cv-heading-font', preset.heading);
     page.style.setProperty('--cv-body-font', preset.body);
-
-    if(data.template === 'chrono'){
-      renderOfficielCV(page);
-      return;
-    }
 
     const photoHtml = data.photo ? `style="background-image:url('${data.photo}')"` : '';
 
@@ -902,7 +789,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   bindText('f-phone','phone');
   bindText('f-location','location');
   bindText('f-link','link');
-  bindText('f-birthdate','birthdate');
   bindText('f-summary','summary');
 
   // Photo upload
@@ -1399,7 +1285,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     if(!key || !EXAMPLES[key]) return;
     const example = EXAMPLES[key];
     Object.assign(data, {
-      name:'', title:'', email:'', phone:'', location:'', link:'', birthdate:'', photo:'', summary:'',
+      name:'', title:'', email:'', phone:'', location:'', link:'', photo:'', summary:'',
       experiences: [], education: [], skills: [], languages: [], interests: [], customSections: []
     }, example);
     currentCvId = null;
@@ -1647,7 +1533,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   // ---------- Reset current CV (used by "Effacer tout" and "Nouveau CV") ----------
   function resetCurrentCV(){
     Object.assign(data, {
-      name:'', title:'', email:'', phone:'', location:'', link:'', birthdate:'', photo:'', summary:'',
+      name:'', title:'', email:'', phone:'', location:'', link:'', photo:'', summary:'',
       experiences: [], education: [], skills: [], languages: [], interests: [], customSections: [],
       mainOrder: ['summary', 'experience', 'education'],
       sideOrder: ['skills', 'languages', 'interests']
@@ -1756,7 +1642,7 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     let saved;
     try{ saved = JSON.parse(raw); }catch(e){ alert('Ce fichier de sauvegarde est corrompu.'); return; }
     Object.assign(data, {
-      name:'', title:'', email:'', phone:'', location:'', link:'', birthdate:'', photo:'', summary:'',
+      name:'', title:'', email:'', phone:'', location:'', link:'', photo:'', summary:'',
       experiences: [], education: [], skills: [], languages: [], interests: [], customSections: [],
       template: data.template, accent: data.accent
     }, saved);
@@ -1833,7 +1719,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     document.getElementById('f-phone').value = data.phone || '';
     document.getElementById('f-location').value = data.location || '';
     document.getElementById('f-link').value = data.link || '';
-    document.getElementById('f-birthdate').value = data.birthdate || '';
     document.getElementById('f-summary').value = data.summary || '';
     document.getElementById('photoPreview').style.backgroundImage = data.photo ? `url('${data.photo}')` : '';
     document.getElementById('photoPreview').textContent = data.photo ? '' : 'Photo';

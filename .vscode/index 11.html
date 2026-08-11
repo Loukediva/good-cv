@@ -171,11 +171,6 @@ button, input, textarea, select{ font-family:inherit; }
 .order-item.dragging{ opacity:0.4; }
 .order-item.drag-over{ border-color: var(--accent); }
 .order-item .drag-handle{ color: var(--ink-muted); font-size:14px; line-height:1; user-select:none; }
-.order-remove-btn{
-  background:none; border:none; color: var(--ink-muted); cursor:pointer;
-  font-size:14px; line-height:1; padding:3px 7px; border-radius:5px; flex-shrink:0;
-}
-.order-remove-btn:hover{ background: var(--warn); color:#fff; }
 
 
 .cv-save-row{
@@ -561,7 +556,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
         <div id="mainOrderList" class="order-list"></div>
         <p class="hint" style="margin:14px 0 6px; font-weight:600; color:var(--ink-text);">Colonne latérale</p>
         <div id="sideOrderList" class="order-list"></div>
-        <div id="hiddenSectionsWrap"></div>
       </div>
 
       <div class="desk-section">
@@ -1501,15 +1495,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     return sec ? (sec.title || 'Rubrique') : key;
   }
 
-  const BUILTIN_SECTION_KEYS = ['summary', 'experience', 'education', 'skills', 'languages', 'interests'];
-
   function renderOrderList(containerId, orderArray){
     const container = document.getElementById(containerId);
     container.innerHTML = orderArray.map(key => `
       <div class="order-item" draggable="true" data-key="${key}">
-        <span class="drag-handle">⠿</span>
-        <span style="flex:1;">${esc(sectionLabel(key))}</span>
-        ${BUILTIN_SECTION_KEYS.includes(key) ? `<button class="order-remove-btn" draggable="false" data-remove-key="${key}" data-list="${containerId}" title="Retirer cette section du CV">×</button>` : ''}
+        <span class="drag-handle">⠿</span> ${esc(sectionLabel(key))}
       </div>
     `).join('');
 
@@ -1543,46 +1533,11 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
         renderCV();
       });
     });
-
-    container.querySelectorAll('[data-remove-key]').forEach(btn => {
-      btn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        const key = btn.dataset.removeKey;
-        const arr = btn.dataset.list === 'mainOrderList' ? data.mainOrder : data.sideOrder;
-        const idx = arr.indexOf(key);
-        if(idx !== -1) arr.splice(idx, 1);
-        renderSectionOrderLists();
-        renderCV();
-      });
-    });
-  }
-
-  function renderHiddenSectionsUI(){
-    const defaultMain = ['summary', 'experience', 'education'];
-    const defaultSide = ['skills', 'languages', 'interests'];
-    const hidden = [
-      ...defaultMain.filter(k => !data.mainOrder.includes(k)).map(k => ({ key: k, target: 'main' })),
-      ...defaultSide.filter(k => !data.sideOrder.includes(k)).map(k => ({ key: k, target: 'side' }))
-    ];
-    const wrap = document.getElementById('hiddenSectionsWrap');
-    if(!hidden.length){ wrap.innerHTML = ''; return; }
-    wrap.innerHTML = '<p class="hint" style="margin:12px 0 6px;">Sections retirées — cliquez pour les remettre :</p>' +
-      hidden.map(h => `<button class="btn btn-sm" data-restore-key="${h.key}" data-restore-target="${h.target}" style="margin:0 6px 6px 0;">+ ${esc(sectionLabel(h.key))}</button>`).join('');
-    wrap.querySelectorAll('[data-restore-key]').forEach(btn => {
-      btn.addEventListener('click', () => {
-        const key = btn.dataset.restoreKey;
-        if(btn.dataset.restoreTarget === 'main') data.mainOrder.push(key);
-        else data.sideOrder.push(key);
-        renderSectionOrderLists();
-        renderCV();
-      });
-    });
   }
 
   function renderSectionOrderLists(){
     renderOrderList('mainOrderList', data.mainOrder);
     renderOrderList('sideOrderList', data.sideOrder);
-    renderHiddenSectionsUI();
   }
 
   // ---------- Cover letter (template-based, works fully offline/once deployed) ----------

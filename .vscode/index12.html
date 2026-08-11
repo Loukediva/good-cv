@@ -808,7 +808,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   }
 
   function renderCV(){
-    scheduleDraftSave();
     const page = document.getElementById('cvPage');
     page.className = 'cv-page template-' + data.template;
     page.style.setProperty('--accent', data.accent);
@@ -1699,7 +1698,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
       sideOrder: ['skills', 'languages', 'interests']
     });
     currentCvId = null;
-    storageDelete('draft');
     document.querySelectorAll('.desk input[type=text], .desk input[type=email], .desk input[type=tel], .desk textarea').forEach(el => el.value = '');
     document.getElementById('photoPreview').style.backgroundImage = '';
     document.getElementById('photoPreview').textContent = 'Photo';
@@ -1778,64 +1776,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     await storageSet('cv-index', JSON.stringify(list));
   }
 
-  // ---------- Auto-save draft (protects against accidental tab closure) ----------
-  function hasMeaningfulContent(d){
-    return !!(
-      (d.name && d.name.trim()) ||
-      (d.title && d.title.trim()) ||
-      (d.summary && d.summary.trim()) ||
-      (d.experiences && d.experiences.length) ||
-      (d.education && d.education.length) ||
-      (d.skills && d.skills.length) ||
-      (d.customSections && d.customSections.length)
-    );
-  }
-
-  let draftSaveTimer = null;
-  function scheduleDraftSave(){
-    clearTimeout(draftSaveTimer);
-    draftSaveTimer = setTimeout(async () => {
-      try{
-        await storageSet('draft', JSON.stringify({ data, currentCvId, savedAt: new Date().toISOString() }));
-        const hint = document.getElementById('savedCvHint');
-        if(hint && !hint.textContent.includes('Enregistré')){
-          hint.textContent = 'Brouillon sauvegardé automatiquement ✓';
-          setTimeout(() => { if(hint.textContent === 'Brouillon sauvegardé automatiquement ✓') hint.textContent = baseStorageHint; }, 1800);
-        }
-      }catch(e){ /* best effort */ }
-    }, 900);
-  }
-
-  async function restoreDraftIfAny(){
-    let raw;
-    try{ raw = await storageGet('draft'); }catch(e){ return; }
-    if(!raw) return;
-    let parsed;
-    try{ parsed = JSON.parse(raw); }catch(e){ return; }
-    if(!parsed || !parsed.data || !hasMeaningfulContent(parsed.data)) return;
-
-    const when = parsed.savedAt ? new Date(parsed.savedAt).toLocaleString('fr-FR') : '';
-    const label = parsed.data.name || parsed.data.title || 'un CV en cours';
-    const wantsRestore = confirm(
-      `Un brouillon non enregistré a été trouvé (${label}${when ? ', modifié le ' + when : ''}).\n\nVoulez-vous le restaurer ?`
-    );
-    if(wantsRestore){
-      Object.assign(data, {
-        name:'', title:'', email:'', phone:'', location:'', link:'', birthdate:'', photo:'', summary:'',
-        experiences: [], education: [], skills: [], languages: [], interests: [], customSections: []
-      }, parsed.data);
-      currentCvId = parsed.currentCvId || null;
-      if(currentCvId){
-        const index = await getIndex();
-        const entry = index.find(e => e.id === currentCvId);
-        document.getElementById('cvNameInput').value = entry ? entry.name : '';
-      }
-      fillFormFromData();
-    } else {
-      await storageDelete('draft');
-    }
-  }
-
   async function saveCurrentCV(){
     const nameInput = document.getElementById('cvNameInput');
     let name = nameInput.value.trim();
@@ -1850,7 +1790,6 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
     if(existingIdx >= 0) index[existingIdx] = entry; else index.unshift(entry);
     await setIndex(index);
     await renderSavedCvList();
-    await storageDelete('draft');
     const hint = document.getElementById('savedCvHint');
     hint.textContent = 'Enregistré ✓';
     setTimeout(() => { if(hint.textContent === 'Enregistré ✓') hint.textContent = baseStorageHint; }, 2500);
@@ -1980,24 +1919,21 @@ a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visib
   }
 
   // ---------- Init ----------
-  (async () => {
-    await restoreDraftIfAny();
-    renderExpList();
-    renderEduList();
-    renderLangList();
-    renderSkillTags();
-    renderInterestTags();
-    renderCustomSectionsList();
-    renderSectionOrderLists();
-    renderCV();
-    renderSavedCvList();
-    if(!window.storage){
-      baseStorageHint = localStorageAvailable()
-        ? 'Vos CV enregistrés restent disponibles sur cet appareil et ce navigateur.'
-        : 'Sauvegarde valable pour cette session seulement (stockage du navigateur bloqué).';
-      document.getElementById('savedCvHint').textContent = baseStorageHint;
-    }
-  })();
+  renderExpList();
+  renderEduList();
+  renderLangList();
+  renderSkillTags();
+  renderInterestTags();
+  renderCustomSectionsList();
+  renderSectionOrderLists();
+  renderCV();
+  renderSavedCvList();
+  if(!window.storage){
+    baseStorageHint = localStorageAvailable()
+      ? 'Vos CV enregistrés restent disponibles sur cet appareil et ce navigateur.'
+      : 'Sauvegarde valable pour cette session seulement (stockage du navigateur bloqué).';
+    document.getElementById('savedCvHint').textContent = baseStorageHint;
+  }
 })();
 </script>
 </body>
